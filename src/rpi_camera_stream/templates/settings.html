@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-100">
+        Settings
+    </h1>
+
+    <!-- Rover Name Card -->
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6 mb-6">
+        <h2 class="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
+            This Rover
+        </h2>
+        <div class="flex items-center gap-4">
+            <label for="rover-name" class="text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                Rover Name
+            </label>
+            <input type="text"
+                   id="rover-name"
+                   class="flex-1 px-3 py-2 bg-gray-100 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary"
+                   placeholder="Cattern Rover LAN">
+            <button id="save-rover-name"
+                    class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-md transition-colors text-sm font-medium">
+                Save
+            </button>
+        </div>
+        <p id="rover-name-status" class="mt-2 text-sm text-green-500 hidden">Saved!</p>
+    </div>
+
+    <!-- Camera 0 Status Card -->
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6 mb-6">
+        <h2 class="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
+            Camera 0 <span class="text-sm font-normal text-gray-500 dark:text-gray-400">(/dev/video0)</span>
+        </h2>
+        <div id="camera-0-status" class="text-gray-600 dark:text-gray-300">
+            Loading...
+        </div>
+    </div>
+
+    <!-- Camera 1 Status Card -->
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6 mb-6">
+        <h2 class="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
+            Camera 1 <span class="text-sm font-normal text-gray-500 dark:text-gray-400">(/dev/video1)</span>
+        </h2>
+        <div id="camera-1-status" class="text-gray-600 dark:text-gray-300">
+            <p><span class="font-medium">Status:</span>
+               <span class="text-gray-500">Not configured</span></p>
+        </div>
+    </div>
+
+    <!-- Theme Settings Card -->
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+        <h2 class="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
+            Appearance
+        </h2>
+        <div class="flex items-center justify-between">
+            <span class="text-gray-600 dark:text-gray-300">Dark Mode</span>
+            <button id="settings-theme-toggle"
+                    class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors bg-gray-300 dark:bg-blue-600">
+                <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1 dark:translate-x-6"></span>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Load rover name from server settings (roverSettings from base.html)
+    const roverNameInput = document.getElementById('rover-name');
+    roverNameInput.value = roverSettings.rover_name || DEFAULT_ROVER_NAME;
+
+    // Save rover name to server
+    document.getElementById('save-rover-name').addEventListener('click', () => {
+        const name = roverNameInput.value.trim() || DEFAULT_ROVER_NAME;
+        const statusEl = document.getElementById('rover-name-status');
+
+        fetch('/api/rover-settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rover_name: name })
+        })
+        .then(response => response.json())
+        .then(data => {
+            roverSettings = data;
+
+            // Update page title and navbar
+            document.title = 'Settings - ' + name;
+            updateRoverName(name);
+
+            // Show saved status
+            statusEl.textContent = 'Saved!';
+            statusEl.className = 'mt-2 text-sm text-green-500';
+            statusEl.classList.remove('hidden');
+            setTimeout(() => statusEl.classList.add('hidden'), 2000);
+        })
+        .catch(() => {
+            statusEl.textContent = 'Failed to save';
+            statusEl.className = 'mt-2 text-sm text-red-500';
+            statusEl.classList.remove('hidden');
+            setTimeout(() => statusEl.classList.add('hidden'), 2000);
+        });
+    });
+
+    // Fetch camera 0 status
+    fetch('/api/status')
+        .then(response => response.json())
+        .then(data => {
+            const statusEl = document.getElementById('camera-0-status');
+            if (data.status === 'running') {
+                statusEl.innerHTML = `
+                    <div class="space-y-2">
+                        <p><span class="font-medium">Status:</span>
+                           <span class="text-green-500">Running</span></p>
+                        <p><span class="font-medium">Resolution:</span>
+                           ${data.properties?.width || 'N/A'} x ${data.properties?.height || 'N/A'}</p>
+                        <p><span class="font-medium">FPS:</span>
+                           ${data.properties?.fps?.toFixed(1) || 'N/A'}</p>
+                        <p><span class="font-medium">Frames captured:</span>
+                           ${data.frame_count || 0}</p>
+                    </div>
+                `;
+            } else {
+                statusEl.innerHTML = `<p><span class="font-medium">Status:</span>
+                                      <span class="text-red-500">${data.status}</span></p>`;
+            }
+        })
+        .catch(() => {
+            document.getElementById('camera-0-status').innerHTML =
+                '<p><span class="font-medium">Status:</span> <span class="text-red-500">Failed to load</span></p>';
+        });
+
+    // Settings theme toggle (syncs with navbar toggle)
+    const settingsToggle = document.getElementById('settings-theme-toggle');
+    settingsToggle.addEventListener('click', () => {
+        document.getElementById('theme-toggle').click();
+    });
+</script>
+{% endblock %}

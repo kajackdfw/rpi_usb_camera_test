@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[60vh]">
+    <h1 id="welcome-title" class="text-4xl font-light mb-4 text-gray-800 dark:text-gray-100">
+        Welcome
+    </h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
+        Raspberry Pi USB Camera Streaming Server
+    </p>
+
+    <div class="flex gap-4">
+        <a href="{{ url_for('mjpeg.streams') }}"
+           class="px-6 py-3 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors text-sm font-medium">
+            View Camera Streams
+        </a>
+        <a href="{{ url_for('settings.index') }}"
+           class="px-6 py-3 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-800 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium">
+            Settings
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('welcome-title').textContent = 'Welcome to ' + (roverSettings.rover_name || DEFAULT_ROVER_NAME);
+</script>
+{% endblock %}
