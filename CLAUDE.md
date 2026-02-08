@@ -36,6 +36,31 @@ python -m rpi_camera_stream --preview
 python -m rpi_camera_stream --device /dev/video0 --width 1920 --height 1080 --fps 30
 ```
 
+## Troubleshooting
+
+### Virtual Environment Issues After Moving Project
+
+If you move the project folder to a new location, the virtual environment will break because it contains hardcoded paths. To fix this:
+
+```bash
+# Deactivate the current virtual environment
+deactivate
+
+# Remove the broken virtual environment
+rm -rf .venv
+
+# Recreate the virtual environment
+python3.11 -m venv .venv
+
+# Activate it
+source .venv/bin/activate
+
+# Reinstall dependencies
+pip install -e ".[dev]"
+```
+
+**Why this happens:** Virtual environments store absolute paths to the Python interpreter and installed packages. When you move the folder, these paths become invalid. Always recreate the venv rather than trying to fix the paths.
+
 ## Architecture
 
 ```
