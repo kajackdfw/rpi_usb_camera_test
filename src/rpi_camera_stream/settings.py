@@ -11,6 +11,8 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_SETTINGS = {
     "rover_name": "Cattern Rover LAN",
+    "cloud_location": "https://cattern.com",
+    "this_rover_ip": None,
     "active_camera_slot": None,  # No camera active by default
     "cameras": [
         {"slot": 1, "device": "", "type": "N", "enabled": False},

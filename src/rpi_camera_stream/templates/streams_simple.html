@@ -123,9 +123,10 @@
     <div class="container">
         <nav class="nav">
             <div class="nav-links">
-                <a href="/">Home</a>
-                <a href="/streams">Camera Streams</a>
-                <a href="/settings">Settings</a>
+                <a href="/lan/">Home</a>
+                <a href="/lan/streams">LAN Streams</a>
+                <a href="/www/streams">WWW Streams</a>
+                <a href="/lan/settings">Settings</a>
             </div>
         </nav>
 
@@ -136,11 +137,11 @@
 
         <div class="video-card">
             <div class="video-wrapper">
-                <img src="/video_feed" alt="Camera Stream">
+                <img src="/lan/video_feed" alt="Camera Stream">
             </div>
 
             <div class="controls">
-                <button class="btn-primary" onclick="location.href='/api/snapshot'">
+                <button class="btn-primary" onclick="location.href='/lan/api/snapshot'">
                     📸 Take Snapshot
                 </button>
                 <button class="btn-secondary" onclick="window.location.reload()">

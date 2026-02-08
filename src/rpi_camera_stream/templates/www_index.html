@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}WWW Home{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[60vh]">
+    <h1 class="text-4xl font-light mb-4 text-gray-800 dark:text-gray-100">
+        Remote Access - {{ rover_name }}
+    </h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400 mb-4">
+        H.264 Streaming for Cloud/Remote Viewing
+    </p>
+    <div class="bg-blue-50 dark:bg-blue-900 border-l-4 border-blue-500 p-4 max-w-2xl">
+        <p class="text-gray-700 dark:text-gray-300 mb-2">
+            This section provides H.264 video streaming optimized for remote access over the internet.
+        </p>
+        <p class="text-gray-700 dark:text-gray-300">
+            H.264 encoding provides efficient bandwidth usage for viewing streams over WAN connections.
+        </p>
+    </div>
+    <div class="mt-8">
+        <a href="{{ url_for('www.streams') }}"
+           class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition">
+            View Camera Streams
+        </a>
+    </div>
+</div>
+{% endblock %}

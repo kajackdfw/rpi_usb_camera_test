@@ -256,9 +256,10 @@
     <div class="container">
         <nav class="nav">
             <div class="nav-links">
-                <a href="/">Home</a>
-                <a href="/settings">Video Settings</a>
-                <a href="/streams">Camera Streams</a>
+                <a href="/lan/">Home</a>
+                <a href="/lan/settings">Settings</a>
+                <a href="/lan/streams">LAN Streams</a>
+                <a href="/www/streams">WWW Streams</a>
             </div>
         </nav>
 
@@ -283,9 +284,9 @@
                 </div>
 
                 {% if camera.active %}
-                <div class="camera-snapshot" onclick="location.href='/lan_stream/{{ camera.slot }}'">
+                <div class="camera-snapshot" onclick="location.href='/lan/stream/{{ camera.slot }}'">
                     <img id="snapshot-{{ camera.slot }}"
-                         src="/api/snapshot?t={{ range(1, 10000) | random }}"
+                         src="/lan/api/snapshot?t={{ range(1, 10000) | random }}"
                          alt="{{ camera.name }} Snapshot">
                     <div class="snapshot-overlay">
                         Click to view live stream
@@ -295,7 +296,7 @@
                 <div class="camera-snapshot inactive">
                     {% if camera.has_snapshot %}
                     <!-- Show last captured frame -->
-                    <img src="/api/snapshot/{{ camera.slot }}?t={{ range(1, 10000) | random }}"
+                    <img src="/lan/api/snapshot/{{ camera.slot }}?t={{ range(1, 10000) | random }}"
                          alt="{{ camera.name }} Last Frame"
                          style="width: 100%; height: auto; opacity: 0.7;">
                     <div style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8em;">
@@ -326,7 +327,7 @@
                         {% if camera.active %}
                             <!-- Already streaming this camera -->
                             <div class="button-wrapper">
-                                <a href="/lan_stream/{{ camera.slot }}" class="btn btn-primary">
+                                <a href="/lan/stream/{{ camera.slot }}" class="btn btn-primary">
                                     📹 View Stream
                                 </a>
                             </div>
@@ -341,7 +342,7 @@
                     {% else %}
                         <!-- Camera not configured -->
                         <div class="button-wrapper">
-                            <a href="/settings" class="btn btn-primary">
+                            <a href="/lan/settings" class="btn btn-primary">
                                 ⚙️ Configure
                             </a>
                         </div>
@@ -385,7 +386,7 @@
             if (img) {
                 // Add timestamp to prevent caching
                 const timestamp = new Date().getTime();
-                img.src = '/api/snapshot?t=' + timestamp;
+                img.src = '/lan/api/snapshot?t=' + timestamp;
             }
         }
 

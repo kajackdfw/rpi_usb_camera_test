@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}WWW Streams{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-light mb-2 text-gray-800 dark:text-gray-100">
+        Camera Streams (H.264)
+    </h1>
+    <p class="text-gray-600 dark:text-gray-400">
+        Remote access streams optimized for cloud viewing
+    </p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for camera in cameras %}
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6 transition hover:shadow-xl">
+        <div class="mb-4">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                    Slot {{ camera.slot }}
+                </h2>
+                <span class="px-3 py-1 text-sm font-bold bg-blue-500 text-white rounded">
+                    {{ camera.type }}
+                </span>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400">{{ camera.name }}</p>
+        </div>
+
+        <div class="mb-4 p-3 bg-gray-100 dark:bg-slate-700 rounded">
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+                <span class="font-semibold">Device:</span> {{ camera.device }}
+            </p>
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+                <span class="font-semibold">Type:</span> {{ camera.type_name }}
+            </p>
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+                <span class="font-semibold">Status:</span>
+                {% if camera.active %}
+                    <span class="text-green-600 dark:text-green-400 font-semibold">● Active</span>
+                {% else %}
+                    <span class="text-gray-500">● Inactive</span>
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="flex gap-2">
+            {% if camera.active %}
+                <a href="{{ url_for('www.stream', slot=camera.slot) }}"
+                   class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded text-center transition">
+                    View Stream
+                </a>
+            {% else %}
+                <button onclick="switchCamera({{ camera.slot }})"
+                        class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded transition">
+                    Activate Camera
+                </button>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    async function switchCamera(slot) {
+        try {
+            const response = await fetch('/api/switch-camera', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ slot: slot })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + (data.error || 'Failed to switch camera'));
+            }
+        } catch (error) {
+            alert('Network error: ' + error.message);
+        }
+    }
+</script>
+{% endblock %}

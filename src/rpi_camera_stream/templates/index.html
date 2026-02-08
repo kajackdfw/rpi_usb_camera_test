@@ -1,14 +1,32 @@
 {% extends "base.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}LAN Home{% endblock %}
 
 {% block content %}
 <div class="flex flex-col items-center justify-center min-h-[60vh]">
     <h1 class="text-4xl font-light mb-4 text-gray-800 dark:text-gray-100">
         Welcome to {{ rover_name }}
     </h1>
-    <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
+    <p class="text-lg text-gray-600 dark:text-gray-400 mb-4">
         Raspberry Pi USB Camera Streaming Server
     </p>
+    <div class="bg-green-50 dark:bg-green-900 border-l-4 border-green-500 p-4 max-w-2xl mb-6">
+        <p class="text-gray-700 dark:text-gray-300 mb-2">
+            You are accessing the LAN interface - optimized for local network viewing.
+        </p>
+        <p class="text-gray-700 dark:text-gray-300">
+            MJPEG streaming provides simple, low-latency viewing on your local network.
+        </p>
+    </div>
+    <div class="flex gap-4">
+        <a href="{{ url_for('mjpeg.streams') }}"
+           class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition">
+            View LAN Streams
+        </a>
+        <a href="{{ url_for('www.index') }}"
+           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition">
+            WWW Interface
+        </a>
+    </div>
 </div>
 {% endblock %}

@@ -29,6 +29,48 @@
         <p id="rover-name-status" class="mt-2 text-sm text-green-500 hidden">Saved!</p>
     </div>
 
+    <!-- Cloud Configuration Card -->
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6 mb-6">
+        <h2 class="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
+            Cloud Configuration
+        </h2>
+        <div class="space-y-4">
+            <div>
+                <label for="cloud-location" class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Cloud Location
+                </label>
+                <input type="text"
+                       id="cloud-location"
+                       class="w-full px-3 py-2 bg-gray-100 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary"
+                       placeholder="https://cattern.com">
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Base URL of your cloud server</p>
+            </div>
+
+            <div>
+                <label for="rover-ip" class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    This Rover's Public IP
+                </label>
+                <div class="flex gap-2">
+                    <input type="text"
+                           id="rover-ip"
+                           class="flex-1 px-3 py-2 bg-gray-100 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md text-gray-900 dark:text-gray-100"
+                           readonly>
+                    <button id="refresh-ip-btn"
+                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors text-sm font-medium whitespace-nowrap">
+                        🔄 Refresh
+                    </button>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Automatically detected on startup. Click Refresh to update.</p>
+            </div>
+
+            <button id="save-cloud-config-btn"
+                    class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors text-sm font-medium">
+                💾 Save Cloud Configuration
+            </button>
+            <p id="cloud-config-status" class="text-sm text-green-500 hidden">Saved!</p>
+        </div>
+    </div>
+
     <!-- Camera Configuration Card -->
     <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6 mb-6">
         <h2 class="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
@@ -162,6 +204,15 @@
     // Load rover name from server-rendered template variable
     const roverNameInput = document.getElementById('rover-name');
     roverNameInput.value = '{{ rover_name }}';
+
+    // Load cloud configuration
+    function loadCloudSettings() {
+        document.getElementById('cloud-location').value = roverSettings.cloud_location || 'https://cattern.com';
+        document.getElementById('rover-ip').value = roverSettings.this_rover_ip || 'Not detected';
+    }
+
+    // Initialize cloud settings
+    loadCloudSettings();
 
     // Save rover name to server
     document.getElementById('save-rover-name').addEventListener('click', () => {
@@ -350,6 +401,79 @@
     const settingsToggle = document.getElementById('settings-theme-toggle');
     settingsToggle.addEventListener('click', () => {
         document.getElementById('theme-toggle').click();
+    });
+
+    // Refresh IP button
+    document.getElementById('refresh-ip-btn').addEventListener('click', async () => {
+        const button = document.getElementById('refresh-ip-btn');
+        const originalText = button.textContent;
+        button.textContent = '⏳ Refreshing...';
+        button.disabled = true;
+
+        try {
+            const response = await fetch('/api/refresh-ip', { method: 'POST' });
+            const data = await response.json();
+
+            if (data.success) {
+                roverSettings.this_rover_ip = data.ip;
+                document.getElementById('rover-ip').value = data.ip;
+
+                const statusEl = document.getElementById('cloud-config-status');
+                statusEl.textContent = '✓ IP refreshed: ' + data.ip;
+                statusEl.className = 'text-sm text-green-500';
+                statusEl.classList.remove('hidden');
+                setTimeout(() => statusEl.classList.add('hidden'), 3000);
+            } else {
+                const statusEl = document.getElementById('cloud-config-status');
+                statusEl.textContent = '✗ Failed to refresh IP: ' + (data.error || 'Unknown error');
+                statusEl.className = 'text-sm text-red-500';
+                statusEl.classList.remove('hidden');
+                setTimeout(() => statusEl.classList.add('hidden'), 5000);
+            }
+        } catch (error) {
+            const statusEl = document.getElementById('cloud-config-status');
+            statusEl.textContent = '✗ Network error refreshing IP';
+            statusEl.className = 'text-sm text-red-500';
+            statusEl.classList.remove('hidden');
+            setTimeout(() => statusEl.classList.add('hidden'), 5000);
+        } finally {
+            button.textContent = originalText;
+            button.disabled = false;
+        }
+    });
+
+    // Save cloud configuration
+    document.getElementById('save-cloud-config-btn').addEventListener('click', async () => {
+        const cloudLocation = document.getElementById('cloud-location').value.trim();
+        const statusEl = document.getElementById('cloud-config-status');
+
+        try {
+            const response = await fetch('/api/rover-settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cloud_location: cloudLocation })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                roverSettings.cloud_location = data.cloud_location;
+                statusEl.textContent = '✓ Cloud configuration saved!';
+                statusEl.className = 'text-sm text-green-500';
+                statusEl.classList.remove('hidden');
+                setTimeout(() => statusEl.classList.add('hidden'), 3000);
+            } else {
+                statusEl.textContent = '✗ Failed to save';
+                statusEl.className = 'text-sm text-red-500';
+                statusEl.classList.remove('hidden');
+                setTimeout(() => statusEl.classList.add('hidden'), 3000);
+            }
+        } catch (error) {
+            statusEl.textContent = '✗ Network error';
+            statusEl.className = 'text-sm text-red-500';
+            statusEl.classList.remove('hidden');
+            setTimeout(() => statusEl.classList.add('hidden'), 3000);
+        }
     });
 </script>
 {% endblock %}

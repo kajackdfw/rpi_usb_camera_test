@@ -210,3 +210,23 @@ def get_slot_snapshot(slot):
         return send_file(snapshot_path, mimetype="image/jpeg")
     else:
         return jsonify({"error": f"No snapshot available for this slot (checked: {snapshot_path})"}), 404
+
+
+@api_bp.route("/refresh-ip", methods=["POST"])
+def refresh_ip():
+    """Manually refresh the rover's public IP from cloud API."""
+    settings = current_app.config.get("settings")
+
+    from ..startup import fetch_rover_ip
+
+    cloud_location = settings.get("cloud_location")
+    if not cloud_location:
+        return jsonify({"error": "No cloud_location configured"}), 400
+
+    rover_ip = fetch_rover_ip(cloud_location, timeout=10)
+
+    if rover_ip:
+        settings.set("this_rover_ip", rover_ip)
+        return jsonify({"success": True, "ip": rover_ip})
+    else:
+        return jsonify({"error": "Failed to fetch IP from cloud"}), 500

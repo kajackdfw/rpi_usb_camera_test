@@ -3,12 +3,12 @@
 import logging
 import os
 
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_socketio import SocketIO
 
 from .camera import FrameBuffer, OpenCVCamera
 from .config import Config
-from .routes import api_bp, mjpeg_bp, settings_bp
+from .routes import api_bp, mjpeg_bp, settings_bp, www_bp
 from .settings import Settings
 from .socketio_handlers import VideoNamespace
 
@@ -38,6 +38,10 @@ def create_app(config: Config = None) -> Flask:
 
     # Load settings first to check for active camera configuration
     settings = Settings()
+
+    # Run startup tasks (IP detection, etc.)
+    from .startup import run_startup_tasks
+    run_startup_tasks(settings)
 
     frame_buffer = FrameBuffer()
 
@@ -79,6 +83,12 @@ def create_app(config: Config = None) -> Flask:
     app.register_blueprint(api_bp)
     app.register_blueprint(mjpeg_bp)
     app.register_blueprint(settings_bp)
+    app.register_blueprint(www_bp)
+
+    @app.route("/")
+    def root():
+        """Redirect root to WWW interface (secure by default)."""
+        return redirect(url_for("www.index"))
 
     @app.context_processor
     def inject_settings():

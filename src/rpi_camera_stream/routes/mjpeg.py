@@ -11,7 +11,7 @@ from ..encoders import encode_jpeg
 
 logger = logging.getLogger(__name__)
 
-mjpeg_bp = Blueprint("mjpeg", __name__)
+mjpeg_bp = Blueprint("mjpeg", __name__, url_prefix="/lan")
 
 
 def _get_frame_buffer() -> FrameBuffer:
@@ -130,8 +130,8 @@ def streams():
     return render_template("streams_overview.html", cameras=camera_slots)
 
 
-@mjpeg_bp.route("/lan_stream/<int:slot>")
-def lan_stream(slot):
+@mjpeg_bp.route("/stream/<int:slot>")
+def stream(slot):
     """Render individual camera live stream page."""
     settings = current_app.config.get("settings")
     cameras = settings.get("cameras", [])
