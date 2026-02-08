@@ -102,6 +102,11 @@ class OpenCVCamera:
         """Return whether the camera is running."""
         return self._running
 
+    @property
+    def device(self) -> str:
+        """Return the device path."""
+        return self.config.device
+
     def get_properties(self) -> dict:
         """Get current camera properties."""
         if self._capture is None:

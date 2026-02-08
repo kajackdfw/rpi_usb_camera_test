@@ -36,13 +36,45 @@ def create_app(config: Config = None) -> Flask:
     template_dir = os.path.join(os.path.dirname(__file__), "templates")
     app.template_folder = template_dir
 
+    # Load settings first to check for active camera configuration
+    settings = Settings()
+
     frame_buffer = FrameBuffer()
+
+    # Check if there's an active camera slot configured
+    active_slot = settings.get("active_camera_slot")
+    cameras = settings.get("cameras", [])
+
+    logger.info(f"Startup: active_camera_slot = {active_slot}, cameras = {cameras}")
+
+    camera_started = False
+    if active_slot and cameras and active_slot <= len(cameras):
+        camera_config = cameras[active_slot - 1]
+        logger.info(f"Checking slot {active_slot}: enabled={camera_config.get('enabled')}, device={camera_config.get('device')}")
+        if camera_config.get("enabled") and camera_config.get("device"):
+            # Use the configured device for the active slot
+            config.camera.device = camera_config["device"]
+            logger.info(f"Starting with configured camera: Slot {active_slot} on {camera_config['device']}")
+            camera_started = True
+        else:
+            logger.warning(f"Slot {active_slot} is not properly configured (enabled={camera_config.get('enabled')}, device={camera_config.get('device')})")
+
+    # If no active camera is set, try to start the first enabled camera
+    if not camera_started and cameras:
+        logger.info("No active camera started yet, looking for first enabled camera...")
+        for cam_config in cameras:
+            if cam_config.get("enabled") and cam_config.get("device"):
+                config.camera.device = cam_config["device"]
+                settings.set("active_camera_slot", cam_config["slot"])
+                logger.info(f"No active camera set. Starting first enabled camera: Slot {cam_config['slot']} on {cam_config['device']}")
+                break
+
     camera = OpenCVCamera(config.camera, frame_buffer)
 
     app.config["frame_buffer"] = frame_buffer
     app.config["camera"] = camera
     app.config["app_config"] = config
-    app.config["settings"] = Settings()
+    app.config["settings"] = settings
 
     app.register_blueprint(api_bp)
     app.register_blueprint(mjpeg_bp)

@@ -4,7 +4,7 @@ import logging
 import time
 from typing import Generator
 
-from flask import Blueprint, Response, current_app, jsonify, render_template
+from flask import Blueprint, Response, current_app, jsonify, redirect, render_template, url_for
 
 from ..camera import FrameBuffer
 from ..encoders import encode_jpeg
@@ -59,82 +59,99 @@ def index():
 def streams():
     """Render the camera streams overview page with snapshots."""
     from ..utils import get_camera_info, get_display_name
+    from pathlib import Path
 
-    # Scan for available video devices (check up to video9)
-    # This allows detection of cameras on any video device number
-    import os
-
-    available_devices = []
-    for i in range(10):
-        device = f"/dev/video{i}"
-        if os.path.exists(device):
-            available_devices.append(device)
+    # Get camera slot configuration from settings
+    settings = current_app.config.get("settings")
+    camera_configs = settings.get("cameras", [
+        {"slot": 1, "device": "", "type": "N", "enabled": False},
+        {"slot": 2, "device": "", "type": "N", "enabled": False},
+        {"slot": 3, "device": "", "type": "N", "enabled": False},
+    ])
 
     camera_slots = []
-    seen_usb_paths = set()
-    slot_id = 0
 
-    # Process available devices and filter out duplicates
-    for device_path in available_devices:
-        # Stop after finding 3 unique cameras
-        if slot_id >= 3:
-            break
+    # Map camera type to readable name
+    type_names = {
+        "W": "Wide Angle",
+        "N": "Normal",
+        "IR": "Infrared",
+        "T": "Telephoto"
+    }
 
-        # Query device information using udevadm
+    # Check for snapshots directory - use consistent path calculation
+    # current_app.root_path is src/rpi_camera_stream, go up 2 levels to project root
+    app_root = Path(current_app.root_path).parent.parent
+    snapshots_dir = app_root / "snapshots"
+
+    for config in camera_configs:
+        # Skip unconfigured slots
+        if not config["enabled"]:
+            continue
+
+        slot_id = config["slot"] - 1  # Convert to 0-indexed
+        device_path = config["device"]
+        camera_type = config["type"]
+        enabled = config["enabled"]
+
+        # Query device information
         device_info = get_camera_info(device_path)
-
-        # Check if this is a duplicate device (same USB path as a previous camera)
-        # USB path includes bus/port info, making it unique per physical USB connection
-        if device_info.exists and device_info.usb_path:
-            if device_info.usb_path in seen_usb_paths:
-                # This is a duplicate/subdevice, skip it
-                continue
-            else:
-                seen_usb_paths.add(device_info.usb_path)
-
         display_name = get_display_name(device_info)
+
+        # Check if snapshot exists for this slot
+        snapshot_path = snapshots_dir / f"slot{config['slot']}_last.jpg"
+        has_snapshot = snapshot_path.exists()
 
         camera_slots.append({
             "id": slot_id,
+            "slot": config["slot"],
             "name": display_name,
-            "device": device_path,
+            "device": device_path or f"Camera {config['slot']}",
+            "type": camera_type,
+            "type_name": type_names.get(camera_type, "Normal"),
             "exists": device_info.exists,
             "model_id": device_info.model_id,
             "vendor_id": device_info.vendor_id,
+            "enabled": enabled,
+            "has_snapshot": has_snapshot,
         })
-        slot_id += 1
 
-    # Fill remaining slots with "Not Found" entries
-    while len(camera_slots) < 3:
-        camera_slots.append({
-            "id": slot_id,
-            "name": "Not Found",
-            "device": f"/dev/video{slot_id}",
-            "exists": False,
-            "model_id": None,
-            "vendor_id": None,
-        })
-        slot_id += 1
+    # If no cameras are configured, redirect to settings page
+    if not camera_slots:
+        return redirect(url_for('settings.index'))
 
-    # Check which cameras are active
-    # For now, only camera 0 is active (connected to the running capture)
-    camera = current_app.config.get("camera")
-    active_camera_id = 0 if (camera and camera.is_running) else None
+    # Get the active camera slot from settings
+    active_slot = settings.get("active_camera_slot")
 
-    # Mark each camera as active or inactive
+    # Mark the active camera slot
     for cam in camera_slots:
-        cam["active"] = (cam["id"] == active_camera_id)
+        cam["active"] = (cam["slot"] == active_slot) if active_slot else False
 
     return render_template("streams_overview.html", cameras=camera_slots)
 
 
-@mjpeg_bp.route("/lan_stream/<int:camera_id>")
-def lan_stream(camera_id):
+@mjpeg_bp.route("/lan_stream/<int:slot>")
+def lan_stream(slot):
     """Render individual camera live stream page."""
-    if camera_id != 0:
-        return jsonify({"error": f"Camera {camera_id} not available"}), 404
+    settings = current_app.config.get("settings")
+    cameras = settings.get("cameras", [])
 
-    return render_template("streams_simple.html", camera_id=camera_id)
+    # Validate slot number
+    if slot < 1 or slot > len(cameras):
+        return jsonify({"error": f"Invalid camera slot {slot}"}), 404
+
+    camera_config = cameras[slot - 1]
+
+    # Check if slot is configured
+    if not camera_config.get("enabled") or not camera_config.get("device"):
+        return jsonify({"error": f"Camera slot {slot} not configured"}), 404
+
+    # Check if this is the active camera
+    active_slot = settings.get("active_camera_slot")
+    if slot != active_slot:
+        return jsonify({"error": f"Camera {slot} is not active. Active camera: {active_slot}"}), 400
+
+    return render_template("streams_simple.html", camera_id=slot, camera_type=camera_config["type"])
 
 
 @mjpeg_bp.route("/video_feed")

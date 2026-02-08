@@ -97,6 +97,23 @@
             font-size: 1.3em;
             font-weight: 600;
             color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .camera-subtitle {
+            font-size: 1.06em;
+            color: #666;
+            margin-top: 5px;
+        }
+        .camera-type-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 0.7em;
+            font-weight: bold;
+            background: #3b82f6;
+            color: white;
+            border-radius: 4px;
         }
         .camera-status {
             padding: 10px 20px;
@@ -104,7 +121,7 @@
             font-weight: 500;
             border-radius: 6px;
             text-align: center;
-            flex: 0 0 calc(30% - 7px);
+            flex: 0 0 calc(50% - 5px);
             display: block;
         }
         .camera-status.active {
@@ -181,7 +198,7 @@
             padding-top: 15px;
         }
         .button-wrapper {
-            flex: 0 0 calc(35% - 7px);
+            flex: 0 0 calc(50% - 5px);
             display: block;
         }
         button, .btn {
@@ -240,8 +257,8 @@
         <nav class="nav">
             <div class="nav-links">
                 <a href="/">Home</a>
+                <a href="/settings">Video Settings</a>
                 <a href="/streams">Camera Streams</a>
-                <a href="/settings">Settings</a>
             </div>
         </nav>
 
@@ -254,12 +271,20 @@
             {% for camera in cameras %}
             <div class="camera-card">
                 <div class="camera-header">
-                    <div class="camera-title">{{ camera.name }}</div>
+                    <div class="camera-title">
+                        <span>Slot {{ camera.slot }}</span>
+                        {% if camera.enabled %}
+                        <span class="camera-type-badge">{{ camera.type }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="camera-subtitle">
+                        {{ camera.name }}
+                    </div>
                 </div>
 
                 {% if camera.active %}
-                <div class="camera-snapshot" onclick="location.href='/lan_stream/{{ camera.id }}'">
-                    <img id="snapshot-{{ camera.id }}"
+                <div class="camera-snapshot" onclick="location.href='/lan_stream/{{ camera.slot }}'">
+                    <img id="snapshot-{{ camera.slot }}"
                          src="/api/snapshot?t={{ range(1, 10000) | random }}"
                          alt="{{ camera.name }} Snapshot">
                     <div class="snapshot-overlay">
@@ -268,12 +293,27 @@
                 </div>
                 {% else %}
                 <div class="camera-snapshot inactive">
+                    {% if camera.has_snapshot %}
+                    <!-- Show last captured frame -->
+                    <img src="/api/snapshot/{{ camera.slot }}?t={{ range(1, 10000) | random }}"
+                         alt="{{ camera.name }} Last Frame"
+                         style="width: 100%; height: auto; opacity: 0.7;">
+                    <div style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8em;">
+                        Last frame
+                    </div>
+                    {% else %}
+                    <!-- Show placeholder -->
                     <div class="camera-placeholder">
                         <div class="camera-placeholder-icon">📷</div>
                         <div class="camera-placeholder-text">
-                            {% if camera.exists %}Camera Interface {{ camera.device }}{% else %}Device Not Found{% endif %}
+                            {% if camera.enabled %}
+                                {% if camera.exists %}Camera Interface {{ camera.device }}{% else %}Device Not Found{% endif %}
+                            {% else %}
+                                Not Configured
+                            {% endif %}
                         </div>
                     </div>
+                    {% endif %}
                 </div>
                 {% endif %}
 
@@ -281,28 +321,46 @@
                     <div class="camera-status {% if camera.active %}active{% else %}inactive{% endif %}">
                         {% if camera.active %}● Active{% else %}● Inactive{% endif %}
                     </div>
-                    <div class="button-wrapper">
-                        <a href="/lan_stream/{{ camera.id }}"
-                           class="btn btn-primary {% if not camera.active %}disabled{% endif %}">
-                            📹 Live Stream
-                        </a>
-                    </div>
-                    <div class="button-wrapper">
-                        <button class="btn btn-secondary"
-                                onclick="refreshSnapshot({{ camera.id }})"
-                                {% if not camera.active %}disabled{% endif %}>
-                            🔄 Refresh
-                        </button>
-                    </div>
+
+                    {% if camera.enabled %}
+                        {% if camera.active %}
+                            <!-- Already streaming this camera -->
+                            <div class="button-wrapper">
+                                <a href="/lan_stream/{{ camera.slot }}" class="btn btn-primary">
+                                    📹 View Stream
+                                </a>
+                            </div>
+                        {% else %}
+                            <!-- Can switch to this camera -->
+                            <div class="button-wrapper">
+                                <button class="btn btn-primary" onclick="switchCamera({{ camera.slot }})">
+                                    ▶ Use this Camera
+                                </button>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <!-- Camera not configured -->
+                        <div class="button-wrapper">
+                            <a href="/settings" class="btn btn-primary">
+                                ⚙️ Configure
+                            </a>
+                        </div>
+                    {% endif %}
                 </div>
 
                 <div class="camera-info">
                     <div>Device: {{ camera.device }}</div>
-                    {% if camera.exists %}
-                        {% if camera.model_id and camera.vendor_id %}
-                        <div>USB ID: {{ camera.vendor_id }}:{{ camera.model_id }}</div>
+                    {% if camera.enabled %}
+                        <div>Type: {{ camera.type_name }}</div>
+                        {% if camera.exists %}
+                            {% if camera.model_id and camera.vendor_id %}
+                            <div>USB ID: {{ camera.vendor_id }}:{{ camera.model_id }}</div>
+                            {% endif %}
+                        {% else %}
+                            <div>USB ID: n/a</div>
                         {% endif %}
                     {% else %}
+                        <div>Type: Not Set</div>
                         <div>USB ID: n/a</div>
                     {% endif %}
                 </div>
@@ -312,22 +370,42 @@
     </div>
 
     <script>
-        // List of active camera IDs (generated server-side)
-        const activeCameras = {{ (cameras | selectattr('active') | map(attribute='id') | list) | tojson }};
+        // List of active camera slots (generated server-side)
+        const activeCameras = {{ (cameras | selectattr('active') | map(attribute='slot') | list) | tojson }};
 
         // Auto-refresh snapshots every 5 seconds for active cameras only
         setInterval(() => {
-            activeCameras.forEach(cameraId => {
-                refreshSnapshot(cameraId);
+            activeCameras.forEach(slot => {
+                refreshSnapshot(slot);
             });
         }, 5000);
 
-        function refreshSnapshot(cameraId) {
-            const img = document.getElementById('snapshot-' + cameraId);
+        function refreshSnapshot(slot) {
+            const img = document.getElementById('snapshot-' + slot);
             if (img) {
                 // Add timestamp to prevent caching
                 const timestamp = new Date().getTime();
                 img.src = '/api/snapshot?t=' + timestamp;
+            }
+        }
+
+        async function switchCamera(slot) {
+            try {
+                const response = await fetch('/api/switch-camera', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ slot: slot })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    location.reload();  // Reload to update UI
+                } else {
+                    alert('✗ Error: ' + (data.error || 'Failed to switch camera'));
+                }
+            } catch (error) {
+                alert('✗ Network error: ' + error.message);
             }
         }
     </script>

@@ -11,6 +11,12 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_SETTINGS = {
     "rover_name": "Cattern Rover LAN",
+    "active_camera_slot": None,  # No camera active by default
+    "cameras": [
+        {"slot": 1, "device": "", "type": "N", "enabled": False},
+        {"slot": 2, "device": "", "type": "N", "enabled": False},
+        {"slot": 3, "device": "", "type": "N", "enabled": False},
+    ],
 }
 
 
@@ -36,6 +42,18 @@ class Settings:
                     with open(self._file_path, "r") as f:
                         self._settings = json.load(f)
                     logger.info(f"Loaded settings from {self._file_path}")
+
+                    # Merge missing keys from DEFAULT_SETTINGS (for upgrades)
+                    needs_save = False
+                    for key, value in DEFAULT_SETTINGS.items():
+                        if key not in self._settings:
+                            self._settings[key] = value
+                            needs_save = True
+                            logger.info(f"Added missing setting key: {key}")
+
+                    if needs_save:
+                        self._save_unlocked()
+
                 except (json.JSONDecodeError, IOError) as e:
                     logger.error(f"Failed to load settings: {e}")
                     self._settings = DEFAULT_SETTINGS.copy()

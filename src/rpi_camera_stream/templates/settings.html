@@ -29,24 +29,115 @@
         <p id="rover-name-status" class="mt-2 text-sm text-green-500 hidden">Saved!</p>
     </div>
 
-    <!-- Camera 0 Status Card -->
+    <!-- Camera Configuration Card -->
     <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6 mb-6">
         <h2 class="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
-            Camera 0 <span class="text-sm font-normal text-gray-500 dark:text-gray-400">(/dev/video0)</span>
+            Camera Configuration
         </h2>
-        <div id="camera-0-status" class="text-gray-600 dark:text-gray-300">
-            Loading...
+        <p class="text-gray-600 dark:text-gray-400 mb-4 text-sm">
+            Configure up to 3 camera slots. Assign video devices and set camera types.
+        </p>
+
+        <!-- Camera Slots Configuration -->
+        <div id="camera-slots" class="space-y-4">
+            <!-- Camera Slot 1 -->
+            <div class="camera-slot-config p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
+                <h3 class="font-semibold mb-3 text-gray-800 dark:text-gray-100">Camera Slot 1</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Video Device</label>
+                        <select id="camera1-device" class="w-full p-2 border rounded-lg bg-white dark:bg-slate-600 border-gray-300 dark:border-slate-500 text-gray-900 dark:text-gray-100">
+                            <option value="">Not Assigned</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Camera Type</label>
+                        <select id="camera1-type" class="w-full p-2 border rounded-lg bg-white dark:bg-slate-600 border-gray-300 dark:border-slate-500 text-gray-900 dark:text-gray-100">
+                            <option value="W">Wide Angle (W)</option>
+                            <option value="N" selected>Normal (N)</option>
+                            <option value="IR">Infrared (IR)</option>
+                            <option value="T">Telephoto (T)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Enabled</label>
+                        <input type="checkbox" id="camera1-enabled" class="w-6 h-6 rounded border-gray-300 dark:border-slate-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Camera Slot 2 -->
+            <div class="camera-slot-config p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
+                <h3 class="font-semibold mb-3 text-gray-800 dark:text-gray-100">Camera Slot 2</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Video Device</label>
+                        <select id="camera2-device" class="w-full p-2 border rounded-lg bg-white dark:bg-slate-600 border-gray-300 dark:border-slate-500 text-gray-900 dark:text-gray-100">
+                            <option value="">Not Assigned</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Camera Type</label>
+                        <select id="camera2-type" class="w-full p-2 border rounded-lg bg-white dark:bg-slate-600 border-gray-300 dark:border-slate-500 text-gray-900 dark:text-gray-100">
+                            <option value="W">Wide Angle (W)</option>
+                            <option value="N" selected>Normal (N)</option>
+                            <option value="IR">Infrared (IR)</option>
+                            <option value="T">Telephoto (T)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Enabled</label>
+                        <input type="checkbox" id="camera2-enabled" class="w-6 h-6 rounded border-gray-300 dark:border-slate-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Camera Slot 3 -->
+            <div class="camera-slot-config p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
+                <h3 class="font-semibold mb-3 text-gray-800 dark:text-gray-100">Camera Slot 3</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Video Device</label>
+                        <select id="camera3-device" class="w-full p-2 border rounded-lg bg-white dark:bg-slate-600 border-gray-300 dark:border-slate-500 text-gray-900 dark:text-gray-100">
+                            <option value="">Not Assigned</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Camera Type</label>
+                        <select id="camera3-type" class="w-full p-2 border rounded-lg bg-white dark:bg-slate-600 border-gray-300 dark:border-slate-500 text-gray-900 dark:text-gray-100">
+                            <option value="W">Wide Angle (W)</option>
+                            <option value="N" selected>Normal (N)</option>
+                            <option value="IR">Infrared (IR)</option>
+                            <option value="T">Telephoto (T)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Enabled</label>
+                        <input type="checkbox" id="camera3-enabled" class="w-6 h-6 rounded border-gray-300 dark:border-slate-500">
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-3 mt-4">
+            <button id="scan-devices-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium">
+                🔍 Scan for Cameras
+            </button>
+            <button id="save-cameras-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium">
+                💾 Save Camera Configuration
+            </button>
+        </div>
+        <p id="camera-config-status" class="mt-2 text-sm text-green-500 hidden">Saved!</p>
     </div>
 
-    <!-- Camera 1 Status Card -->
+    <!-- Active Camera Status Card -->
     <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6 mb-6">
         <h2 class="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
-            Camera 1 <span class="text-sm font-normal text-gray-500 dark:text-gray-400">(/dev/video1)</span>
+            Active Camera Status
         </h2>
-        <div id="camera-1-status" class="text-gray-600 dark:text-gray-300">
-            <p><span class="font-medium">Status:</span>
-               <span class="text-gray-500">Not configured</span></p>
+        <div id="active-camera-status" class="text-gray-600 dark:text-gray-300">
+            Loading...
         </div>
     </div>
 
@@ -104,14 +195,128 @@
         });
     });
 
-    // Fetch camera 0 status
+    // Load available devices on page load
+    async function loadAvailableDevices() {
+        try {
+            const response = await fetch('/api/available-devices');
+            const data = await response.json();
+
+            // Get saved camera config to preserve values
+            const cameras = roverSettings.cameras || [];
+
+            // Populate device dropdowns
+            for (let slot = 1; slot <= 3; slot++) {
+                const select = document.getElementById(`camera${slot}-device`);
+                const savedDevice = cameras[slot - 1]?.device || '';
+
+                select.innerHTML = '<option value="">Not Assigned</option>';
+
+                data.devices.forEach(device => {
+                    const option = document.createElement('option');
+                    option.value = device.path;
+                    option.textContent = `${device.path} - ${device.name}`;
+                    select.appendChild(option);
+                });
+
+                // Set the saved value after populating
+                if (savedDevice) {
+                    select.value = savedDevice;
+                }
+            }
+
+            // After devices are loaded, also load other config settings
+            loadCameraConfig();
+        } catch (error) {
+            console.error('Failed to load available devices:', error);
+        }
+    }
+
+    // Load current camera configuration (type and enabled)
+    function loadCameraConfig() {
+        const cameras = roverSettings.cameras || [];
+
+        cameras.forEach((camera, index) => {
+            const slot = index + 1;
+            // Don't set device here - it's set in loadAvailableDevices
+            document.getElementById(`camera${slot}-type`).value = camera.type || 'N';
+            document.getElementById(`camera${slot}-enabled`).checked = camera.enabled || false;
+        });
+    }
+
+    // Save camera configuration
+    document.getElementById('save-cameras-btn').addEventListener('click', async () => {
+        const cameras = [];
+
+        for (let slot = 1; slot <= 3; slot++) {
+            cameras.push({
+                slot: slot,
+                device: document.getElementById(`camera${slot}-device`).value,
+                type: document.getElementById(`camera${slot}-type`).value,
+                enabled: document.getElementById(`camera${slot}-enabled`).checked
+            });
+        }
+
+        const statusEl = document.getElementById('camera-config-status');
+
+        try {
+            const response = await fetch('/api/cameras', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cameras })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                roverSettings.cameras = data.cameras;
+                statusEl.textContent = '✓ Camera configuration saved successfully!';
+                statusEl.className = 'mt-2 text-sm text-green-500';
+                statusEl.classList.remove('hidden');
+                setTimeout(() => statusEl.classList.add('hidden'), 3000);
+            } else {
+                statusEl.textContent = '✗ Error: ' + (data.error || 'Unknown error');
+                statusEl.className = 'mt-2 text-sm text-red-500';
+                statusEl.classList.remove('hidden');
+                setTimeout(() => statusEl.classList.add('hidden'), 5000);
+            }
+        } catch (error) {
+            statusEl.textContent = '✗ Failed to save camera configuration';
+            statusEl.className = 'mt-2 text-sm text-red-500';
+            statusEl.classList.remove('hidden');
+            setTimeout(() => statusEl.classList.add('hidden'), 5000);
+        }
+    });
+
+    // Scan devices button
+    document.getElementById('scan-devices-btn').addEventListener('click', loadAvailableDevices);
+
+    // Initialize camera configuration on page load
+    // loadAvailableDevices will populate dropdowns and then call loadCameraConfig
+    loadAvailableDevices();
+
+    // Fetch active camera status
     fetch('/api/status')
         .then(response => response.json())
         .then(data => {
-            const statusEl = document.getElementById('camera-0-status');
-            if (data.status === 'running') {
+            const statusEl = document.getElementById('active-camera-status');
+            const activeSlot = roverSettings.active_camera_slot;
+
+            if (activeSlot && data.status === 'running') {
+                const cameraConfig = (roverSettings.cameras || [])[activeSlot - 1];
+                const typeNames = {
+                    'W': 'Wide Angle',
+                    'N': 'Normal',
+                    'IR': 'Infrared',
+                    'T': 'Telephoto'
+                };
+
                 statusEl.innerHTML = `
                     <div class="space-y-2">
+                        <p><span class="font-medium">Active Camera:</span>
+                           <span class="text-blue-600 dark:text-blue-400">Slot ${activeSlot}</span>
+                           <span class="ml-2 text-xs bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded">${typeNames[cameraConfig?.type] || 'Normal'}</span></p>
+                        <p><span class="font-medium">Device:</span>
+                           ${cameraConfig?.device || 'Unknown'}</p>
                         <p><span class="font-medium">Status:</span>
                            <span class="text-green-500">Running</span></p>
                         <p><span class="font-medium">Resolution:</span>
@@ -122,13 +327,22 @@
                            ${data.frame_count || 0}</p>
                     </div>
                 `;
+            } else if (activeSlot) {
+                statusEl.innerHTML = `
+                    <p><span class="font-medium">Active Camera:</span>
+                       <span class="text-blue-600 dark:text-blue-400">Slot ${activeSlot}</span></p>
+                    <p><span class="font-medium">Status:</span>
+                       <span class="text-red-500">${data.status}</span></p>
+                `;
             } else {
-                statusEl.innerHTML = `<p><span class="font-medium">Status:</span>
-                                      <span class="text-red-500">${data.status}</span></p>`;
+                statusEl.innerHTML = `
+                    <p><span class="font-medium">Status:</span>
+                       <span class="text-gray-500">No active camera - configure and switch to a camera on the Streams page</span></p>
+                `;
             }
         })
         .catch(() => {
-            document.getElementById('camera-0-status').innerHTML =
+            document.getElementById('active-camera-status').innerHTML =
                 '<p><span class="font-medium">Status:</span> <span class="text-red-500">Failed to load</span></p>';
         });
 
