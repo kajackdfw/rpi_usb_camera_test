@@ -48,6 +48,23 @@ def create_app(config: Config = None) -> Flask:
     app.register_blueprint(mjpeg_bp)
     app.register_blueprint(settings_bp)
 
+    @app.context_processor
+    def inject_settings():
+        """Inject rover settings into all templates."""
+        settings = app.config.get("settings")
+        if settings is None:
+            # Fallback if settings not initialized
+            return {
+                "rover_name": "Cattern Rover LAN",
+                "settings": {}
+            }
+
+        settings_dict = settings.get_all()
+        return {
+            "rover_name": settings_dict.get("rover_name", "Cattern Rover LAN"),
+            "settings": settings_dict
+        }
+
     socketio.init_app(
         app,
         async_mode="eventlet",

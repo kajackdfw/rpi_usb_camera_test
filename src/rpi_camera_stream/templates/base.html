@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}{% endblock %} - {{ rover_name }}</title>
 
     <!-- TailwindCSS 3.4 Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,11 +34,12 @@
         }
     </script>
 
-    <!-- Rover settings initialization -->
+    <!-- Rover settings (server-rendered) -->
     <script>
         const DEFAULT_ROVER_NAME = 'Cattern Rover LAN';
-        let roverSettings = { rover_name: DEFAULT_ROVER_NAME };
+        let roverSettings = {{ settings | tojson }};
 
+        // Keep updateRoverName for dynamic updates from settings page
         function updateRoverName(name) {
             const navTitle = document.getElementById('nav-title');
             if (navTitle) {
@@ -51,24 +52,6 @@
                 document.title = name;
             }
         }
-
-        // Fetch rover settings from server
-        fetch('/api/rover-settings')
-            .then(response => response.json())
-            .then(data => {
-                roverSettings = data;
-                document.addEventListener('DOMContentLoaded', () => {
-                    updateRoverName(data.rover_name || DEFAULT_ROVER_NAME);
-                });
-                if (document.readyState !== 'loading') {
-                    updateRoverName(data.rover_name || DEFAULT_ROVER_NAME);
-                }
-            })
-            .catch(() => {
-                document.addEventListener('DOMContentLoaded', () => {
-                    updateRoverName(DEFAULT_ROVER_NAME);
-                });
-            });
     </script>
 
     {% block head %}{% endblock %}
@@ -83,7 +66,7 @@
                     <a href="{{ url_for('mjpeg.index') }}"
                        id="nav-title"
                        class="text-xl font-semibold text-gray-900 dark:text-white hover:text-primary dark:hover:text-blue-400">
-                        Cattern Rover LAN
+                        {{ rover_name }}
                     </a>
                 </div>
 

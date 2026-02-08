@@ -23,6 +23,9 @@ source .venv/bin/activate
 # Install in development mode
 pip install -e ".[dev]"
 
+# x86 Linux only: Install v4l-utils for camera debugging (not required on Raspberry Pi)
+sudo apt-get update && sudo apt-get install -y v4l-utils
+
 # Run the server
 python -m rpi_camera_stream --port 5000
 

@@ -68,9 +68,9 @@
 
 {% block scripts %}
 <script>
-    // Load rover name from server settings (roverSettings from base.html)
+    // Load rover name from server-rendered template variable
     const roverNameInput = document.getElementById('rover-name');
-    roverNameInput.value = roverSettings.rover_name || DEFAULT_ROVER_NAME;
+    roverNameInput.value = '{{ rover_name }}';
 
     // Save rover name to server
     document.getElementById('save-rover-name').addEventListener('click', () => {
