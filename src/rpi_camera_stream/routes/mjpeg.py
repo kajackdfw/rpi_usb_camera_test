@@ -183,6 +183,27 @@ def snapshot():
     return Response(jpeg_data, mimetype="image/jpeg")
 
 
+@mjpeg_bp.route("/api/snapshot/<int:slot>")
+def snapshot_by_slot(slot):
+    """Get the saved snapshot for a specific camera slot."""
+    from pathlib import Path
+
+    # current_app.root_path is src/rpi_camera_stream, go up 2 levels to project root
+    app_root = Path(current_app.root_path).parent.parent
+    snapshot_path = app_root / "snapshots" / f"slot{slot}_last.jpg"
+
+    if not snapshot_path.exists():
+        return jsonify({"error": f"No snapshot found for slot {slot}"}), 404
+
+    try:
+        with open(snapshot_path, "rb") as f:
+            jpeg_data = f.read()
+        return Response(jpeg_data, mimetype="image/jpeg")
+    except Exception as e:
+        logger.error(f"Failed to read snapshot for slot {slot}: {e}")
+        return jsonify({"error": "Failed to read snapshot"}), 500
+
+
 @mjpeg_bp.route("/api/status")
 def status():
     """Get camera status."""

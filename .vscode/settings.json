@@ -5,5 +5,27 @@
         "${workspaceFolder}/src"
     ],
     "python.analysis.autoSearchPaths": true,
-    "python.languageServer": "Pylance"
+    "python.languageServer": "Pylance",
+    "liveSassCompile.settings.formats": [
+        {
+            "format": "expanded",
+            "extensionName": ".css",
+            "savePath": "/src/rpi_camera_stream/static/css"
+        },
+        {
+            "format": "compressed",
+            "extensionName": ".min.css",
+            "savePath": "/src/rpi_camera_stream/static/css"
+        }
+    ],
+    "liveSassCompile.settings.excludeList": [
+        "**/node_modules/**",
+        ".vscode/**",
+        "**/vendor_packages/**"
+    ],
+    "liveSassCompile.settings.generateMap": true,
+    "liveSassCompile.settings.autoprefix": [
+        "> 1%",
+        "last 2 versions"
+    ]
 }

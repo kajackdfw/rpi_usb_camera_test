@@ -1,0 +1,17 @@
+// SCSS Variables
+// This file won't compile separately (prefixed with _)
+
+// Typography (matching STYLE_GUIDE.md)
+$font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+// Colors
+$primary-color: #0f4c75;
+$primary-hover: #1a6ba0;
+
+// Spacing
+$spacing-unit: 1rem;
+
+// Breakpoints
+$breakpoint-mobile: 640px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;

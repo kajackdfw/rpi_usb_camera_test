@@ -118,3 +118,35 @@ The Arducam 5MP USB camera supports:
 - YUYV 640x480 @ 30fps (raw)
 
 Device path: `/dev/video0`
+
+## SCSS/CSS Development
+
+### SCSS Compilation
+
+SCSS source files in `scss/` are compiled to CSS using the **Live Sass Compiler** VS Code extension by Glenn Marks.
+
+**Setup:**
+1. Install the extension: `Ctrl+P` → `ext install glenn2223.live-sass`
+2. Open any `.scss` file
+3. Click "Watch Sass" in the VS Code status bar
+
+**Output:** Compiled CSS files go to `src/rpi_camera_stream/static/css/`
+- `.css` - Expanded format (for debugging)
+- `.min.css` - Minified format (for production)
+
+See `scss/README.md` for detailed usage and customization options.
+
+## Vendor Packages
+
+Third-party libraries included directly in the project are located in `vendor_packages/`.
+
+### Pico CSS v2
+
+A minimal CSS framework for semantic HTML, available as an alternative to Tailwind CSS.
+
+- **Location:** `vendor_packages/pico-main/`
+- **Documentation:** See `vendor_packages/README.md`
+- **Use case:** Pages requiring class-less, semantic styling
+- **License:** MIT
+
+**Note:** Zip files in `vendor_packages/` are gitignored. Only extracted contents are tracked.

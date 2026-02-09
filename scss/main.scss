@@ -1,0 +1,13 @@
+// Main SCSS file for rpi-camera-stream
+// Compiles to: src/rpi_camera_stream/static/css/main.css
+
+// Variables
+@import 'variables';
+
+// Example custom styles
+body {
+  // Your custom styles here
+}
+
+// You can also import Pico CSS if needed:
+// @import '../vendor_packages/pico-main/scss/pico';
