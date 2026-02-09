@@ -1,0 +1,334 @@
+// Streams page custom styles (using Pico CSS as base)
+// Compiled output: src/rpi_camera_stream/static/css/streams.css
+
+// Navbar enhancements
+nav {
+    border-bottom: 1px solid var(--pico-muted-border-color);
+    padding: 0.5rem 0;
+    margin-bottom: 2rem;
+
+    .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    ul {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+        padding: 0;
+        flex-wrap: wrap;
+
+        li {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+
+            a {
+                text-decoration: none;
+                padding: 0.5rem 1rem;
+                border-radius: var(--pico-border-radius);
+                transition: background-color 0.2s ease;
+                display: block;
+
+                &:hover {
+                    background-color: var(--pico-secondary-hover);
+                }
+            }
+
+            strong a {
+                font-weight: 600;
+                font-size: 1.2rem;
+            }
+        }
+    }
+
+    button {
+        margin: 0;
+        padding: 0.5rem 1rem;
+    }
+
+    // Theme toggle button
+    #theme-toggle {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+
+        &:hover {
+            background: transparent;
+        }
+    }
+}
+
+// Dark mode navbar styling
+[data-theme="dark"] {
+    nav {
+        background: #1f2937; // Dark gray (Tailwind gray-800)
+
+        ul li {
+            a {
+                color: #e5e7eb; // Tailwind gray-200
+            }
+
+            strong a {
+                color: orangered;
+            }
+        }
+    }
+}
+
+// Camera grid layout
+.camera-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+// Camera card
+.camera-card {
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 1em;
+    padding: 1.5rem;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+
+        [data-theme="dark"] & {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+    }
+}
+
+// Dark mode camera card styling
+[data-theme="dark"] {
+    .camera-card {
+        background: #1f2937; // Dark gray (Tailwind gray-800)
+    }
+
+    // Primary button styling in dark mode
+    button.primary,
+    a[role="button"].primary {
+        background: #e5e7eb; // Gray-200
+        color: #10b981; // Green text (Tailwind green-500)
+        border-color: #e5e7eb;
+
+        &:hover {
+            background: #d1d5db; // Gray-300 on hover
+            border-color: #d1d5db;
+        }
+    }
+
+    // Inactive status badge in dark mode
+    .status-badge.inactive {
+        background: var(--pico-background-color); // Content area background
+    }
+} 
+
+// Camera card header
+.camera-card-header {
+    margin-bottom: 1rem;
+
+    h3 {
+        margin-bottom: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+}
+
+// Camera type badge
+.camera-type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--pico-primary);
+    color: var(--pico-primary-inverse);
+    border-radius: var(--pico-border-radius);
+    text-transform: uppercase;
+}
+
+// Camera subtitle
+.camera-subtitle {
+    color: var(--pico-muted-color);
+    font-size: 0.9rem;
+}
+
+// Camera snapshot wrapper
+.camera-snapshot {
+    position: relative;
+    border-radius: var(--pico-border-radius);
+    overflow: hidden;
+    margin-bottom: 1rem;
+    background: var(--pico-card-background-color);
+    cursor: pointer;
+    flex-grow: 1;
+
+    img {
+        display: block;
+        width: 100%;
+        height: auto;
+        transition: opacity 0.3s ease;
+    }
+
+    &:hover img {
+        opacity: 0.9;
+    }
+
+    &.inactive {
+        cursor: default;
+
+        img {
+            opacity: 0.6;
+        }
+    }
+}
+
+// Snapshot overlay (click to view)
+.snapshot-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--pico-border-radius);
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+
+    .camera-snapshot:hover & {
+        opacity: 1;
+    }
+}
+
+// Last frame badge
+.last-frame-badge {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--pico-border-radius);
+    font-size: 0.8rem;
+}
+
+// Camera placeholder
+.camera-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+    background: var(--pico-muted-border-color);
+    color: var(--pico-muted-color);
+
+    .placeholder-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .placeholder-text {
+        font-size: 1rem;
+        font-weight: 500;
+        text-align: center;
+    }
+}
+
+// Camera actions
+.camera-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+// Status badge
+.status-badge {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem 1rem;
+    border-radius: var(--pico-border-radius);
+    font-size: 0.875rem;
+    font-weight: 600;
+
+    &.active {
+        background: var(--pico-ins-color);
+        color: var(--pico-contrast);
+    }
+
+    &.inactive {
+        background: var(--pico-muted-border-color);
+        color: var(--pico-muted-color);
+    }
+}
+
+// Action buttons
+.btn-wrapper {
+    flex: 1;
+
+    button,
+    a[role="button"] {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 0.5rem 1rem;
+        border-radius: var(--pico-border-radius);
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin: 0;
+        text-decoration: none;
+    }
+}
+
+// Camera info
+.camera-info {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--pico-card-sectioning-background-color);
+    border-radius: var(--pico-border-radius);
+    font-size: 0.875rem;
+    color: var(--pico-muted-color);
+
+    div {
+        margin-bottom: 0.25rem;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+// Page header
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    h1 {
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        color: var(--pico-muted-color);
+        font-size: 1.1rem;
+    }
+}

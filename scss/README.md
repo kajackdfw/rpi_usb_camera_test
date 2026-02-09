@@ -4,10 +4,10 @@ This directory contains SCSS source files that are compiled to CSS.
 
 ## Setup
 
-1. Install the **Live Sass Compiler** extension in VS Code:
+1. Install the **Live Sass Compiler** extension by Glenn Marks in VS Code:
    - Press `Ctrl+P` (or `Cmd+P` on Mac)
-   - Type: `ext install ritwickdey.live-sass`
-   - Or search for "Live Sass Compiler" in the Extensions panel
+   - Type: `ext install glenn2223.live-sass`
+   - Or search for "Live Sass Compiler" by Glenn Marks in the Extensions panel
 
 2. Open any `.scss` file in this directory
 

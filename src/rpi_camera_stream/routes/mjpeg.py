@@ -127,7 +127,7 @@ def streams():
     for cam in camera_slots:
         cam["active"] = (cam["slot"] == active_slot) if active_slot else False
 
-    return render_template("streams_overview.html", cameras=camera_slots)
+    return render_template("streams_pico.html", cameras=camera_slots, rover_name=settings.get("rover_name", "Cattern Rover"))
 
 
 @mjpeg_bp.route("/stream/<int:slot>")
