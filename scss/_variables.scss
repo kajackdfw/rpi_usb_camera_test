@@ -15,3 +15,47 @@ $spacing-unit: 1rem;
 $breakpoint-mobile: 640px;
 $breakpoint-tablet: 768px;
 $breakpoint-desktop: 1024px;
+
+// Tailwind CSS Gray colors (100-900)
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$gray-900: #111827;
+ 
+// Brand colors (based on HTML orangered #ff4500)
+$brand-color-100: #fff3e6;
+$brand-color-200: #ffd9b3;
+$brand-color-300: #ffb380;
+$brand-color-400: #ff8c4d;
+$brand-color-500: #ff4500; // Base orangered
+$brand-color-600: #cc3700;
+$brand-color-700: #992900;
+$brand-color-800: #661c00;
+$brand-color-900: #330e00;
+
+// Success colors (based on emerald green)
+$success-color-100: #d1fae5;
+$success-color-200: #a7f3d0;
+$success-color-300: #6ee7b7;
+$success-color-400: #34d399;
+$success-color-500: #10b981; // Base emerald green
+$success-color-600: #059669;
+$success-color-700: #047857;
+$success-color-800: #065f46;
+$success-color-900: #064e3b;
+
+// Card text color (responds to color scheme)
+:root {
+  --card-text-color: #{$gray-800}; // Light mode: darker text
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --card-text-color: #{$gray-200}; // Dark mode: lighter text
+  }
+}

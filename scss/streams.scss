@@ -1,87 +1,13 @@
 // Streams page custom styles (using Pico CSS as base)
 // Compiled output: src/rpi_camera_stream/static/css/streams.css
 
-// Navbar enhancements
-nav {
-    border-bottom: 1px solid var(--pico-muted-border-color);
-    padding: 0.5rem 0;
-    margin-bottom: 2rem;
+// Import variables
+@use 'variables' as *;
 
-    .container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
- 
-    ul {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin: 0;
-        padding: 0;
-        flex-wrap: wrap;
- 
-        li {
-            list-style: none;
-            margin: 0;
-            padding: 0; 
-  
-            a {  
-                text-decoration: none;
-                padding: 0.5rem 1rem;
-                border-radius: var(--pico-border-radius);  
-                transition: background-color 0.2s ease;  
-                display: block;
-                color: #e5e7eb; // Tailwind gray-200 
+// Import main utilities and shared styles
+@forward 'main';
 
-                &:hover {
-                    background-color: var(--pico-secondary-hover);
-                }
-            }
-
-            strong a {
-                font-weight: 600;
-                font-size: 1.2rem;
-                color: orangered;
-            }
-        }
-    }
-
-    button {
-        margin: 0;
-        padding: 0.5rem 1rem;
-    }
-
-    // Theme toggle button
-    #theme-toggle {
-        background: transparent;
-        border: none;
-        cursor: pointer;
-
-        &:hover {
-            background: transparent;
-        }
-    }
-}
-
-// Dark mode navbar styling
-[data-theme="dark"] {
-    nav {
-        background: #1f2937; // Dark gray (Tailwind gray-800)
-
-        ul li {
-            a {
-                color: #e5e7eb; // Tailwind gray-200
-            }
-
-            strong a {
-                color: orangered;
-            }
-        }
-    }
-}
+// Streams-specific styles below
 
 // Camera grid layout
 .camera-grid {
@@ -103,11 +29,15 @@ nav {
     display: flex;
     flex-direction: column;
     border-radius: 1em;
-    padding: 1.5rem;
+    padding: 1rem;
+    margin-bottom: 1em;
+    background: $gray-200;
+    border: 1px solid $brand-color-400;
 
     &:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        border-color: $brand-color-500;
 
         [data-theme="dark"] & {
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
@@ -118,25 +48,46 @@ nav {
 // Dark mode camera card styling
 [data-theme="dark"] {
     .camera-card {
-        background: #1f2937; // Dark gray (Tailwind gray-800)
-    }
-
-    // Primary button styling in dark mode
-    button.primary,
-    a[role="button"].primary {
-        background: #e5e7eb; // Gray-200
-        color: #10b981; // Green text (Tailwind green-500)
-        border-color: #e5e7eb;
+        background: $gray-800;
+        border: 1px solid $gray-700;
 
         &:hover {
-            background: #d1d5db; // Gray-300 on hover
-            border-color: #d1d5db;
+            border-color: $gray-600;
         }
     }
 
-    // Inactive status badge in dark mode
-    .status-badge.inactive {
-        background: var(--pico-background-color); // Content area background
+    // Inactive/disabled button styling in dark mode
+    .btn-wrapper {
+        button,
+        a[role="button"] {
+            &:disabled,
+            &.inactive {
+                background: $gray-800;
+                border-color: $gray-600;
+                color: $gray-400;
+
+                &:hover {
+                    background: $gray-800;
+                    border-color: $gray-600;
+                    color: $gray-400;
+                }
+            }
+        }
+    }
+
+    // Status badges in dark mode
+    .status-badge {
+        &.active {
+            background: $success-color-900;
+            color: $success-color-200;
+            border-color: $success-color-700;
+        }
+
+        &.inactive {
+            background: $gray-700;
+            color: $gray-300;
+            border-color: $gray-600;
+        }
     }
 } 
 
@@ -145,6 +96,7 @@ nav {
     margin-bottom: 1rem;
 
     h3 {
+        margin-top: 0;
         margin-bottom: 0.25rem;
         display: flex;
         align-items: center;
@@ -266,39 +218,34 @@ nav {
 
 // Status badge
 .status-badge {
-    flex: 1;
+    flex: 0 0 auto;
     text-align: center;
     padding: 0.5rem 1rem;
     border-radius: var(--pico-border-radius);
     font-size: 0.875rem;
     font-weight: 600;
 
+    // Light mode colors
     &.active {
-        background: var(--pico-ins-color);
-        color: var(--pico-contrast);
+        background: $success-color-100;
+        color: $success-color-700;
+        border: 1px solid $success-color-300;
     }
 
     &.inactive {
-        background: var(--pico-muted-border-color);
-        color: var(--pico-muted-color);
+        background: $gray-100;
+        color: $gray-600;
+        border: 1px solid $gray-300;
     }
 }
 
-// Action buttons
+// Action buttons wrapper
 .btn-wrapper {
-    flex: 1;
+    flex: 0 0 auto;
 
     button,
     a[role="button"] {
-        display: block;
-        width: 100%;
-        text-align: center;
-        padding: 0.5rem 1rem;
-        border-radius: var(--pico-border-radius);
-        font-size: 0.875rem;
-        font-weight: 600;
-        margin: 0;
-        text-decoration: none;
+        @extend .card-action-button;
     }
 }
 
@@ -318,7 +265,7 @@ nav {
             margin-bottom: 0;
         }
     }
-}
+} 
 
 // Page header
 .page-header {

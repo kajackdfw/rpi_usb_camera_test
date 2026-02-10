@@ -1,16 +1,16 @@
 {
   "rover_name": "Yard Cat",
-  "active_camera_slot": 2,
+  "active_camera_slot": 1,
   "cameras": [
     {
       "slot": 1,
       "device": "/dev/video0",
-      "type": "W",
+      "type": "N",
       "enabled": true
     },
     {
       "slot": 2,
-      "device": "/dev/video4",
+      "device": "",
       "type": "N",
       "enabled": true
     },
