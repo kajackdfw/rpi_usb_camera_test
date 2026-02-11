@@ -1,158 +1,153 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Streams - {{ rover_name }}</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            font-size: 2.5em;
-            font-weight: 300;
-            margin-bottom: 10px;
-        }
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-        .video-card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
-        }
-        .video-wrapper {
-            background: #f0f0f0;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        img {
-            display: block;
-            width: 100%;
-            height: auto;
-        }
-        .controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        button {
-            padding: 12px 30px;
-            font-size: 16px;
-            font-weight: 500;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .btn-primary {
-            background-color: #0f4c75;
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: #1a6ba0;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(15, 76, 117, 0.4);
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-        .btn-secondary:hover {
-            background-color: #5a6268;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
-        }
-        .status {
-            text-align: center;
-            margin-top: 20px;
-            padding: 12px;
-            background: #d4edda;
-            color: #155724;
-            border-radius: 6px;
-            font-weight: 500;
-        }
-        .nav {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-        .nav-links {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: background 0.3s ease;
-        }
-        .nav-links a:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-    </style>
+    <title>Camera {{ camera_id|default(0) }} - {{ rover_name }}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Pico CSS - Conditional (supports light/dark themes) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/pico/css/pico.conditional.min.css') }}">
+
+    <!-- Custom SCSS compiled CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/streams.min.css') }}">
+
+    <!-- Dark mode initialization (before render to prevent flash) -->
+    <script>
+        // Initialize theme from localStorage or system preference
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', initialTheme);
+    </script>
 </head>
 <body>
-    <div class="container">
-        <nav class="nav">
-            <div class="nav-links">
-                <a href="/lan/">Home</a>
-                <a href="/lan/streams">LAN Streams</a>
-                <a href="/www/streams">WWW Streams</a>
-                <a href="/lan/settings">Settings</a>
-            </div>
-        </nav>
+    <!-- Navbar -->
+    <nav>
+        <div class="container">
+            <ul>
+                <li><strong><a href="/lan/" class="contrast">{{ rover_name }}</a></strong></li>
+            </ul>
+            <ul>
+                <li><a href="/lan/">Home</a></li>
+                <li><a href="/lan/settings">Settings</a></li>
+                <li><a href="/lan/streams">LAN Streams</a></li>
+                <li>
+                    <button id="theme-toggle" class="contrast outline" aria-label="Toggle theme" data-tooltip="Toggle dark mode">
+                        <i id="theme-icon" data-lucide="moon" style="width: 1.25rem; height: 1.25rem;"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-        <div class="header">
+    <!-- Main Content -->
+    <main class="container">
+        <header class="page-header">
             <h1>{{ rover_name }}</h1>
-            <p>Camera {{ camera_id|default(0) }} - Live Stream</p>
+            <p>Camera Slot {{ camera_id|default(0) }} - Live Stream {% if camera_type %}<small>({{ camera_type }})</small>{% endif %}</p>
+        </header>
+
+        <article class="camera-card">
+            <div class="camera-card-header">
+                <h3>
+                    <span>Slot {{ camera_id|default(0) }} Live View</span>
+                    {% if camera_type %}
+                    <span class="camera-type-badge">{{ camera_type }}</span>
+                    {% endif %}
+                </h3>
+                <div class="camera-subtitle">
+                    MJPEG Stream
+                </div>
+            </div>
+
+            <!-- Camera Live Stream -->
+            <div class="camera-snapshot">
+                <img src="/lan/video_feed" alt="Camera {{ camera_id|default(0) }} Stream">
+            </div>
+
+            <!-- Status Badge and Controls -->
+            <div class="camera-actions">
+                <div class="status-badge active w-1-3">
+                    <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
+                        <i data-lucide="video" style="width: 1.125rem; height: 1.125rem;"></i>
+                        <span>Streaming</span>
+                    </span>
+                </div>
+
+                <div class="btn-wrapper w-2-3">
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="secondary" onclick="window.location.reload()" style="flex: 1;">
+                            <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
+                                <i data-lucide="refresh-cw" style="width: 1rem; height: 1rem;"></i>
+                                <span>Refresh</span>
+                            </span>
+                        </button>
+                        <a href="/lan/api/snapshot" role="button" style="flex: 1; margin: 0;">
+                            <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
+                                <i data-lucide="camera" style="width: 1rem; height: 1rem;"></i>
+                                <span>Snapshot</span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Camera Info -->
+            <div class="camera-info">
+                <div><strong>Stream Type:</strong> MJPEG</div>
+                <div><strong>Refresh Rate:</strong> Real-time</div>
+                <div><strong>Status:</strong> Active</div>
+            </div>
+        </article>
+
+        <!-- Back Button -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/lan/streams" role="button" class="secondary">
+                <span style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                    <i data-lucide="arrow-left" style="width: 1.125rem; height: 1.125rem;"></i>
+                    <span>Back to All Streams</span>
+                </span>
+            </a>
         </div>
+    </main>
 
-        <div class="video-card">
-            <div class="video-wrapper">
-                <img src="/lan/video_feed" alt="Camera Stream">
-            </div>
+    <!-- Initialize Lucide Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
 
-            <div class="controls">
-                <button class="btn-primary" onclick="location.href='/lan/api/snapshot'">
-                    📸 Take Snapshot
-                </button>
-                <button class="btn-secondary" onclick="window.location.reload()">
-                    🔄 Refresh Stream
-                </button>
-            </div>
+    <!-- Theme Toggle Script -->
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
 
-            <div class="status">
-                ✓ MJPEG Stream Active
-            </div>
-        </div>
-    </div>
+        function updateThemeIcon(theme) {
+            const iconName = theme === 'dark' ? 'sun' : 'moon';
+            const container = document.getElementById('theme-icon');
+
+            // Replace with new icon HTML
+            container.outerHTML = `<i id="theme-icon" data-lucide="${iconName}" style="width: 1.25rem; height: 1.25rem;"></i>`;
+
+            // Reinitialize only the new icon
+            lucide.createIcons();
+        }
+
+        // Initialize icon
+        updateThemeIcon(document.documentElement.getAttribute('data-theme'));
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+    </script>
 </body>
 </html>

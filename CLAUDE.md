@@ -142,11 +142,11 @@ Third-party libraries included directly in the project are located in `vendor_pa
 
 ### Pico CSS v2
 
-A minimal CSS framework for semantic HTML, available as an alternative to Tailwind CSS.
+A minimal CSS framework for semantic HTML. This is the primary CSS framework used across the application.
 
 - **Location:** `vendor_packages/pico-main/`
 - **Documentation:** See `vendor_packages/README.md`
-- **Use case:** Pages requiring class-less, semantic styling
+- **Use case:** Semantic HTML styling with automatic light/dark theme support
 - **License:** MIT
 
 **Note:** Zip files in `vendor_packages/` are gitignored. Only extracted contents are tracked.

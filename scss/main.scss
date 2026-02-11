@@ -1,19 +1,35 @@
 // Main SCSS file for rpi-camera-stream
 // Compiles to: src/rpi_camera_stream/static/css/main.css
 
+// Import Pico CSS colors directly
+@use '../vendor_packages/pico-main/scss/colors' as pico-colors;
+
 // Variables (using @use instead of deprecated @import)
 @use 'variables' as *;
 
+// Global input/select font size override (increase from Pico CSS default)
+/* input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+    font-size: 1rem !important; // 18px instead of default 16px
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    border-radius: 0.25rem;
+    border-width: 1px;
+} */
+
 // Body and content area styles
+html,
 body {
-  background-color: $gray-300; // Light mode background
+  background-color: pico-colors.$zinc-300; // Light mode background
 }
 
 // Dark mode body background
-[data-theme="dark"] {
-  body {
-    background-color: $gray-900;
-  }
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background-color: pico-colors.$zinc-900;
 }
 
 // Width utility classes
@@ -44,12 +60,12 @@ body {
 .w-16-20 { width: 80%; }
 .w-17-20 { width: 85%; }
 .w-18-20 { width: 90%; } 
-.w-19-20 { width: 95%; }
+.w-19-20 { width: 95%; } 
 
 // Navbar styles (standardized across all pages)
 nav {
-    background: $gray-200;
-    border-bottom: 1px solid $brand-color-400;
+    background: pico-colors.$zinc-200;
+    border-bottom: 1px solid pico-colors.$orange-350;
     padding: 0.33rem 0; // Reduced by 33% from 0.5rem
     margin-bottom: 2rem;
 
@@ -80,21 +96,21 @@ nav {
                 border-radius: var(--pico-border-radius);
                 transition: background-color 0.2s ease;
                 display: block;
-                color: $gray-700;
+                color: pico-colors.$zinc-700;
 
                 &:hover {
-                    background-color: $gray-100;
-                    color: $gray-900;
+                    background-color: pico-colors.$zinc-100;
+                    color: pico-colors.$zinc-900;
                 }
             }
 
             strong a {
                 font-weight: 600;
                 font-size: 1.2rem;
-                color: $brand-color-600;
+                color: pico-colors.$orange-500;
 
                 &:hover {
-                    color: $brand-color-700;
+                    color: pico-colors.$orange-600;
                 }
             }
         }
@@ -110,9 +126,11 @@ nav {
         background: transparent;
         border: none;
         cursor: pointer;
+        color: pico-colors.$zinc-500; // Medium gray icon
 
         &:hover {
-            background: transparent;
+            background: pico-colors.$zinc-500; // Medium gray background
+            color: white; // White icon
         }
     }
 }
@@ -120,40 +138,48 @@ nav {
 // Dark mode navbar styling
 [data-theme="dark"] {
     nav {
-        background: $gray-800;
+        background: pico-colors.$zinc-800;
 
         ul li {
             a {
-                color: $gray-200;
+                color: pico-colors.$zinc-200;
 
                 &:hover {
-                    background-color: $gray-700;
-                    color: $gray-100;
+                    background-color: pico-colors.$zinc-700;
+                    color: pico-colors.$zinc-100;
                 }
             }
 
             strong a {
-                color: $brand-color-500;
+                color: pico-colors.$orange-450;
 
                 &:hover {
-                    color: $brand-color-400;
+                    color: pico-colors.$orange-350;
                 }
+            }
+        }
+
+        // Theme toggle button in dark mode (sun icon yellow)
+        #theme-toggle {
+            color: #fbbf24; // Yellow sun icon
+
+            &:hover {
+                background: pico-colors.$zinc-700;
+                color: #fbbf24; // Keep yellow on hover
             }
         }
     }
 }
 
-// Card styles (standardized across all pages)
-.card {
+// Article and Section styling (card-like appearance)
+article,
+section {
     position: relative;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
     border-radius: 1em;
     padding: 1rem;
     margin-bottom: 1em;
-    height: 100%;
-    background: $gray-200;
+    background: pico-colors.$zinc-200;
 
     &:hover {
         transform: translateY(-4px);
@@ -165,69 +191,64 @@ nav {
     }
 }
 
-// Dark mode card styling
+// Dark mode article and section styling
 [data-theme="dark"] {
-    .card {
-        background: $gray-800;
+    article,
+    section {
+        background: pico-colors.$zinc-800;
     }
 }
 
-// Card header
-.card-header {
-    margin-bottom: 1rem;
 
-    h1, h2, h3, h4, h5, h6 {
-        margin-top: 0;
-        margin-bottom: 0.25rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-}
-
-// Card body
-.card-body {
-    flex-grow: 1;
+// Hero Center Layout (for index pages)
+.hero-center {
     display: flex;
     flex-direction: column;
-}
-
-// Card action buttons (standardized button style for cards)
-.card-action-button {
-    display: block;
-    width: 100%;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    padding: 0.5rem 1rem;
-    border-radius: var(--pico-border-radius);
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin: 0;
-    text-decoration: none;
+    min-height: 60vh;
+    gap: 2rem;
 
-    // Light mode colors
-    background: $brand-color-500;
-    border: 1px solid $brand-color-500;
-    color: white;
-
-    &:hover {
-        background: $brand-color-600;
-        border-color: $brand-color-600;
+    hgroup {
+        margin-bottom: 0;
     }
 }
 
-// Dark mode card action button styling
-[data-theme="dark"] {
-    .card-action-button {
-        background: $gray-600;
-        border-color: $gray-500; // 1 step lighter
-        color: $gray-300;
+// Notice Box (alert/info boxes)
+.notice-box {
+    max-width: 42rem;
+    padding: 1rem 1.5rem;
+    border-left: 4px solid;
+    margin-bottom: 1.5rem;
 
-        &:hover {
-            background: $gray-700;
-            border-color: $gray-600; // 1 step lighter
+    &.success {
+        border-color: pico-colors.$jade-500;
+        background: pico-colors.$jade-50;
+
+        [data-theme="dark"] & {
+            background: pico-colors.$jade-900;
+        }
+    }
+
+    p {
+        margin-bottom: 0.5rem;
+
+        &:last-child {
+            margin-bottom: 0;
         }
     }
 }
 
-// You can also import Pico CSS if needed:
-// @use '../vendor_packages/pico-main/scss/pico';
+// Button Group (horizontal button layout)
+.button-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+// Utility Classes
+.hidden {
+    display: none !important;
+}

@@ -3,41 +3,32 @@
 {% block title %}LAN Home{% endblock %}
 
 {% block content %}
-<div class="flex flex-col items-center justify-center min-h-[60vh]">
-    <h1 class="text-4xl font-light mb-4 text-gray-800 dark:text-gray-100">
-        Welcome to {{ rover_name }}
-    </h1>
-    <p class="text-lg text-gray-600 dark:text-gray-400 mb-4">
-        Raspberry Pi USB Camera Streaming Server
-    </p>
-    <div id="mjpeg-notice" class="bg-green-50 dark:bg-green-900 border-l-4 border-green-500 p-4 max-w-2xl mb-6 transition-opacity duration-1000">
-        <p class="text-gray-700 dark:text-gray-300 mb-2">
-            You are accessing the LAN interface - optimized for local network viewing.
-        </p>
-        <p class="text-gray-700 dark:text-gray-300">
-            MJPEG streaming provides simple, low-latency viewing on your local network.
-        </p>
-    </div>
-    <div class="flex gap-4">
-        <a href="{{ url_for('mjpeg.streams') }}"
-           class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition">
-            View LAN Streams
-        </a>
-        <a href="{{ url_for('www.index') }}"
-           class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition">
-            WWW Interface
-        </a>
+<div class="hero-center">
+    <hgroup>
+        <h1>Welcome to {{ rover_name }}</h1>
+        <p>Raspberry Pi USB Camera Streaming Server</p>
+    </hgroup>
+
+    <article class="notice-box success fade-out">
+        <p>You are accessing the LAN interface - optimized for local network viewing.</p>
+        <p>MJPEG streaming provides simple, low-latency viewing on your local network.</p>
+    </article>
+
+    <div class="button-group">
+        <a href="{{ url_for('mjpeg.streams') }}" role="button">View LAN Streams</a>
+        <a href="{{ url_for('www.index') }}" role="button" class="secondary">WWW Interface</a>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    // Fade out MJPEG notice after 15 seconds
+    // Fade out notice after 15 seconds
     setTimeout(() => {
-        const notice = document.getElementById('mjpeg-notice');
+        const notice = document.querySelector('.notice-box.fade-out');
         if (notice) {
             notice.style.opacity = '0';
+            notice.style.transition = 'opacity 1s';
             // Remove from DOM after fade completes
             setTimeout(() => {
                 notice.remove();

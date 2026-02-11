@@ -5,13 +5,13 @@ This project uses VS Code extensions to enhance the development workflow.
 ## Required Extensions
 
 ### Live Sass Compiler
-**ID:** `ritwickdey.live-sass`
+**ID:** `glenn2223.live-sass`
 
 Automatically compiles SCSS files to CSS when you save.
 
 **Install:**
 ```bash
-code --install-extension ritwickdey.live-sass
+code --install-extension glenn2223.live-sass
 ```
 
 Or in VS Code:

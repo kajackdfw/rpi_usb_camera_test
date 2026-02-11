@@ -1,6 +1,9 @@
 // Streams page custom styles (using Pico CSS as base)
 // Compiled output: src/rpi_camera_stream/static/css/streams.css
 
+// Import Pico CSS colors directly
+@use '../vendor_packages/pico-main/scss/colors' as pico-colors;
+
 // Import variables
 @use 'variables' as *;
 
@@ -31,13 +34,13 @@
     border-radius: 1em;
     padding: 1rem;
     margin-bottom: 1em;
-    background: $gray-200;
-    border: 1px solid $brand-color-400;
+    background: pico-colors.$zinc-200;
+    border: 1px solid pico-colors.$orange-350;
 
     &:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        border-color: $brand-color-500;
+        border-color: pico-colors.$orange-450;
 
         [data-theme="dark"] & {
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
@@ -48,11 +51,11 @@
 // Dark mode camera card styling
 [data-theme="dark"] {
     .camera-card {
-        background: $gray-800;
-        border: 1px solid $gray-700;
+        background: pico-colors.$zinc-800;
+        border: 1px solid pico-colors.$zinc-700;
 
         &:hover {
-            border-color: $gray-600;
+            border-color: pico-colors.$zinc-600;
         }
     }
 
@@ -62,14 +65,14 @@
         a[role="button"] {
             &:disabled,
             &.inactive {
-                background: $gray-800;
-                border-color: $gray-600;
-                color: $gray-400;
+                background: pico-colors.$zinc-800;
+                border-color: pico-colors.$zinc-600;
+                color: pico-colors.$zinc-400;
 
                 &:hover {
-                    background: $gray-800;
-                    border-color: $gray-600;
-                    color: $gray-400;
+                    background: pico-colors.$zinc-800;
+                    border-color: pico-colors.$zinc-600;
+                    color: pico-colors.$zinc-400;
                 }
             }
         }
@@ -78,15 +81,15 @@
     // Status badges in dark mode
     .status-badge {
         &.active {
-            background: $success-color-900;
-            color: $success-color-200;
-            border-color: $success-color-700;
+            background: pico-colors.$jade-800;
+            color: pico-colors.$jade-150;
+            border-color: pico-colors.$jade-600;
         }
 
         &.inactive {
-            background: $gray-700;
-            color: $gray-300;
-            border-color: $gray-600;
+            background: pico-colors.$zinc-700;
+            color: pico-colors.$zinc-300;
+            border-color: pico-colors.$zinc-600;
         }
     }
 } 
@@ -227,15 +230,15 @@
 
     // Light mode colors
     &.active {
-        background: $success-color-100;
-        color: $success-color-700;
-        border: 1px solid $success-color-300;
+        background: pico-colors.$jade-100;
+        color: pico-colors.$jade-600;
+        border: 1px solid pico-colors.$jade-200;
     }
 
     &.inactive {
-        background: $gray-100;
-        color: $gray-600;
-        border: 1px solid $gray-300;
+        background: pico-colors.$zinc-100;
+        color: pico-colors.$zinc-600;
+        border: 1px solid pico-colors.$zinc-300;
     }
 }
 
@@ -245,7 +248,15 @@
 
     button,
     a[role="button"] {
-        @extend .card-action-button;
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 0.5rem 1rem;
+        border-radius: var(--pico-border-radius);
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin: 0;
+        text-decoration: none;
     }
 }
 

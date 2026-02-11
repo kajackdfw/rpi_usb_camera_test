@@ -1,0 +1,140 @@
+// Settings page custom styles (using Pico CSS as base)
+// Compiled output: src/rpi_camera_stream/static/css/settings.css
+
+// Import Pico CSS colors directly
+@use '../vendor_packages/pico-main/scss/colors' as pico-colors;
+
+// Import variables
+@use 'variables' as *;
+
+// Import main utilities and shared styles
+@forward 'main';
+
+// Settings-specific styles below
+
+// Settings Container (max-width container for settings page) 
+.settings-container {
+    max-width: 56rem;
+    margin: 0 auto;
+
+    > h1 {
+        margin-bottom: 2rem;
+    }
+}
+
+// Settings Card (additional styling for settings sections)
+.settings-card {
+    padding: 1.5rem; // Override section default 1rem
+    border: 1px solid var(--pico-muted-border-color);
+
+    > h2 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+}
+
+// Form Inline (horizontal form with label, input, button)
+.form-inline {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: center; // Center aligns label, input, and button
+
+    @media (max-width: 640px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+// Form Grid (grid layout for forms)
+.form-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+// Input Group (input with inline button)
+.input-group {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem;
+    align-items: stretch; // Ensure inputs maintain their natural height
+}
+
+// Camera Slot Config (fieldset styling)
+.camera-slot-config {
+    margin-bottom: 1.5rem;
+
+    legend {
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    > div:not(.grid) {
+        margin-bottom: 1rem;
+    }
+
+    .grid {
+        grid-template-columns: 2fr 1fr;
+        gap: 1rem;
+
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr;
+        }
+    }
+}
+
+// Status Message (success/error messages)
+.status-message {
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+
+    &.success {
+        color: pico-colors.$jade-600;
+
+        [data-theme="dark"] & {
+            color: pico-colors.$jade-400;
+        }
+    }
+
+    &.error {
+        color: pico-colors.$red-600;
+
+        [data-theme="dark"] & {
+            color: pico-colors.$red-400;
+        }
+    }
+
+    &.hidden {
+        display: none;
+    }
+}
+
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+    font-size: 1rem !important; // 18px instead of default 16px
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    border-radius: 0.25rem;
+    border-width: 1px;
+}
+
+// Button styling to match input field height
+button,
+a[role="button"],
+input[type="submit"],
+input[type="button"],
+input[type="reset"] {
+    font-size: 1rem !important;
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    min-height: calc(1rem * 1.5 + 0.5rem + 2px); // line-height + padding + border
+}
+ 
+.camera-device-row {
+    margin-bottom: 0.5em;
+}

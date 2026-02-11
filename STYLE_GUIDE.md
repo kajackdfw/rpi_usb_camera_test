@@ -28,17 +28,23 @@ This stack provides:
 
 ## CSS Frameworks
 
-### Current Framework: Tailwind CSS
+### Primary Framework: Pico CSS
 
-The project currently uses Tailwind CSS 3.4 (via Play CDN) for utility-first styling.
+The project uses Pico CSS v2 for semantic HTML styling with automatic light/dark theme support.
 
-### Alternative Available: Pico CSS
-
-Pico CSS v2 is available in `vendor_packages/pico-main/` for semantic HTML styling.
-
-- **Use case**: Pages that benefit from class-less, semantic HTML styling
 - **Location**: `vendor_packages/pico-main/css/`
+- **Used version**: `pico.conditional.min.css` (supports data-theme attribute)
 - **Docs**: https://picocss.com
 - **License**: MIT
 
-See `vendor_packages/README.md` for integration instructions.
+### Custom SCSS
+
+Custom styles are written in SCSS and compiled to CSS:
+- **Source**: `scss/` directory
+- **Output**: `src/rpi_camera_stream/static/css/`
+- **Main files**:
+  - `main.scss` - Core styles, utilities, cards, forms
+  - `streams.scss` - Camera stream page styles
+  - `_variables.scss` - Color variables using Pico CSS colors
+
+See `scss/README.md` for SCSS compilation instructions.

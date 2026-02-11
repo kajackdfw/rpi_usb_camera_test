@@ -37,10 +37,9 @@
                 <li><a href="/lan/">Home</a></li>
                 <li><a href="/lan/settings">Settings</a></li>
                 <li><a href="/lan/streams">LAN Streams</a></li>
-                <li><a href="/www/streams">WWW Streams</a></li>
                 <li>
                     <button id="theme-toggle" class="contrast outline" aria-label="Toggle theme" data-tooltip="Toggle dark mode">
-                        <span id="theme-icon">🌙</span>
+                        <i id="theme-icon" data-lucide="moon" style="width: 1.25rem; height: 1.25rem;"></i>
                     </button>
                 </li>
             </ul>
@@ -172,10 +171,16 @@
     <script>
         // Theme toggle functionality
         const themeToggle = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
 
         function updateThemeIcon(theme) {
-            themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+            const iconName = theme === 'dark' ? 'sun' : 'moon';
+            const container = document.getElementById('theme-icon');
+
+            // Replace with new icon HTML
+            container.outerHTML = `<i id="theme-icon" data-lucide="${iconName}" style="width: 1.25rem; height: 1.25rem;"></i>`;
+
+            // Reinitialize only the new icon
+            lucide.createIcons();
         }
 
         // Initialize icon

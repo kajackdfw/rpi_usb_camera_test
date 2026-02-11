@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,33 +11,18 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- TailwindCSS 3.4 Play CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            DEFAULT: '#0f4c75',
-                            hover: '#1a6ba0',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Pico CSS - Conditional (supports light/dark themes) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/pico/css/pico.conditional.min.css') }}">
+
+    <!-- Custom SCSS compiled CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.min.css') }}">
 
     <!-- Dark mode initialization (before render to prevent flash) -->
     <script>
-        if (localStorage.theme === 'dark' ||
-            (!('theme' in localStorage) &&
-             window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', initialTheme);
     </script>
 
     <!-- Rover settings (server-rendered) -->
@@ -62,72 +47,62 @@
 
     {% block head %}{% endblock %}
 </head>
-<body class="bg-gray-100 dark:bg-slate-900 text-gray-900 dark:text-gray-100 min-h-screen">
+<body>
     <!-- Navbar -->
-    <nav class="bg-white dark:bg-slate-800 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <!-- Left: Title/Home -->
-                <div class="flex items-center">
-                    <a href="{{ url_for('mjpeg.index') }}"
-                       id="nav-title"
-                       class="text-xl font-semibold text-gray-900 dark:text-white hover:text-primary dark:hover:text-blue-400">
-                        {{ rover_name }}
-                    </a>
-                </div>
-
-                <!-- Right: Navigation Links + Theme Toggle -->
-                <div class="flex items-center space-x-4">
-                    <a href="{{ url_for('mjpeg.index') }}"
-                       class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        Home
-                    </a>
-                    <a href="{{ url_for('settings.index') }}"
-                       class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        Settings
-                    </a>
-                    <a href="{{ url_for('mjpeg.streams') }}"
-                       class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                        LAN Streams
-                    </a>
-
-                    <!-- Theme Toggle Button -->
-                    <button id="theme-toggle"
-                            class="p-2 rounded-lg bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600"
-                            aria-label="Toggle dark mode">
-                        <!-- Sun icon (shown in dark mode) -->
-                        <i data-lucide="sun" class="hidden dark:block w-5 h-5 text-yellow-400"></i>
-                        <!-- Moon icon (shown in light mode) -->
-                        <i data-lucide="moon" class="block dark:hidden w-5 h-5 text-gray-700"></i>
+    <nav>
+        <div class="container">
+            <ul>
+                <li><strong><a href="{{ url_for('mjpeg.index') }}" id="nav-title" class="contrast">{{ rover_name }}</a></strong></li>
+            </ul>
+            <ul>
+                <li><a href="{{ url_for('mjpeg.index') }}">Home</a></li>
+                <li><a href="{{ url_for('settings.index') }}">Settings</a></li>
+                <li><a href="{{ url_for('mjpeg.streams') }}">LAN Streams</a></li>
+                <li>
+                    <button id="theme-toggle" class="contrast outline" aria-label="Toggle theme" data-tooltip="Toggle dark mode">
+                        <i id="theme-icon" data-lucide="moon" style="width: 1.25rem; height: 1.25rem;"></i>
                     </button>
-                </div>
-            </div>
+                </li>
+            </ul>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="container">
         {% block content %}{% endblock %}
     </main>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
 
     <!-- Theme Toggle Script -->
     <script>
         const themeToggle = document.getElementById('theme-toggle');
 
-        themeToggle.addEventListener('click', () => {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.theme = 'light';
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.theme = 'dark';
-            }
-        });
-    </script>
+        function updateThemeIcon(theme) {
+            const iconName = theme === 'dark' ? 'sun' : 'moon';
+            const container = document.getElementById('theme-icon');
 
-    <!-- Initialize Lucide Icons -->
-    <script>
-        lucide.createIcons();
+            // Replace with new icon HTML
+            container.outerHTML = `<i id="theme-icon" data-lucide="${iconName}" style="width: 1.25rem; height: 1.25rem;"></i>`;
+
+            // Reinitialize only the new icon
+            lucide.createIcons();
+        }
+
+        // Initialize icon
+        updateThemeIcon(document.documentElement.getAttribute('data-theme'));
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
     </script>
 
     {% block scripts %}{% endblock %}

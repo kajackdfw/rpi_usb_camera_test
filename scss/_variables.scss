@@ -1,12 +1,15 @@
 // SCSS Variables
 // This file won't compile separately (prefixed with _)
 
+// Import Pico CSS colors (must be first)
+@use '../vendor_packages/pico-main/scss/colors' as pico-colors;
+
 // Typography (matching STYLE_GUIDE.md)
 $font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
-// Colors
-$primary-color: #0f4c75;
-$primary-hover: #1a6ba0;
+// Primary colors (Pico CSS azure palette)
+$primary: pico-colors.$azure-700; // #014c75 (close to original #0f4c75)
+$primary-hover: pico-colors.$azure-600; // #02659a (close to original #1a6ba0)
 
 // Spacing
 $spacing-unit: 1rem;
@@ -16,46 +19,83 @@ $breakpoint-mobile: 640px;
 $breakpoint-tablet: 768px;
 $breakpoint-desktop: 1024px;
 
-// Tailwind CSS Gray colors (100-900)
-$gray-100: #f3f4f6;
-$gray-200: #e5e7eb;
-$gray-300: #d1d5db;
-$gray-400: #9ca3af;
-$gray-500: #6b7280;
-$gray-600: #4b5563;
-$gray-700: #374151;
-$gray-800: #1f2937;
-$gray-900: #111827;
+// Gray colors (Pico CSS style scale based on zinc palette)
+// Full scale from 950 (darkest) to 50 (lightest)
+$gray-950: pico-colors.$zinc-950;
+$gray-900: pico-colors.$zinc-900;
+$gray-850: pico-colors.$zinc-850;
+$gray-800: pico-colors.$zinc-800;
+$gray-750: pico-colors.$zinc-750;
+$gray-700: pico-colors.$zinc-700;
+$gray-650: pico-colors.$zinc-650;
+$gray-600: pico-colors.$zinc-600;
+$gray-550: pico-colors.$zinc-550;
+$gray-500: pico-colors.$zinc-500;
+$gray-450: pico-colors.$zinc-450;
+$gray-400: pico-colors.$zinc-400;
+$gray-350: pico-colors.$zinc-350;
+$gray-300: pico-colors.$zinc-300;
+$gray-250: pico-colors.$zinc-250;
+$gray-200: pico-colors.$zinc-200;
+$gray-150: pico-colors.$zinc-150;
+$gray-100: pico-colors.$zinc-100;
+$gray-50: pico-colors.$zinc-50;
+$gray: $gray-500; // Default gray color
  
-// Brand colors (based on HTML orangered #ff4500)
-$brand-color-100: #fff3e6;
-$brand-color-200: #ffd9b3;
-$brand-color-300: #ffb380;
-$brand-color-400: #ff8c4d;
-$brand-color-500: #ff4500; // Base orangered
-$brand-color-600: #cc3700;
-$brand-color-700: #992900;
-$brand-color-800: #661c00;
-$brand-color-900: #330e00;
+// Brand colors (Pico CSS style scale based on orange/red-orange palette)
+// Full scale from 950 (darkest) to 50 (lightest)
+$brand-950: pico-colors.$orange-950;
+$brand-900: pico-colors.$orange-900;
+$brand-850: pico-colors.$orange-850;
+$brand-800: pico-colors.$orange-800;
+$brand-750: pico-colors.$orange-750;
+$brand-700: pico-colors.$orange-700;
+$brand-650: pico-colors.$orange-650;
+$brand-600: pico-colors.$orange-600;
+$brand-550: pico-colors.$orange-550;
+$brand-500: pico-colors.$orange-500;
+$brand-450: pico-colors.$orange-450; // Base brand color (close to orangered)
+$brand-400: pico-colors.$orange-400;
+$brand-350: pico-colors.$orange-350;
+$brand-300: pico-colors.$orange-300;
+$brand-250: pico-colors.$orange-250;
+$brand-200: pico-colors.$orange-200;
+$brand-150: pico-colors.$orange-150;
+$brand-100: pico-colors.$orange-100;
+$brand-50: pico-colors.$orange-50;
+$brand: $brand-450; // Default brand color
 
-// Success colors (based on emerald green)
-$success-color-100: #d1fae5;
-$success-color-200: #a7f3d0;
-$success-color-300: #6ee7b7;
-$success-color-400: #34d399;
-$success-color-500: #10b981; // Base emerald green
-$success-color-600: #059669;
-$success-color-700: #047857;
-$success-color-800: #065f46;
-$success-color-900: #064e3b;
+// Success colors (Pico CSS style scale based on jade/emerald palette)
+// Full scale from 950 (darkest) to 50 (lightest)
+$success-950: pico-colors.$jade-950;
+$success-900: pico-colors.$jade-900;
+$success-850: pico-colors.$jade-850;
+$success-800: pico-colors.$jade-800;
+$success-750: pico-colors.$jade-750;
+$success-700: pico-colors.$jade-700;
+$success-650: pico-colors.$jade-650;
+$success-600: pico-colors.$jade-600;
+$success-550: pico-colors.$jade-550;
+$success-500: pico-colors.$jade-500;
+$success-450: pico-colors.$jade-450;
+$success-400: pico-colors.$jade-400; // Base success color
+$success-350: pico-colors.$jade-350;
+$success-300: pico-colors.$jade-300;
+$success-250: pico-colors.$jade-250;
+$success-200: pico-colors.$jade-200;
+$success-150: pico-colors.$jade-150;
+$success-100: pico-colors.$jade-100;
+$success-50: pico-colors.$jade-50;
+$success: $success-400; // Default success color
 
-// Card text color (responds to color scheme)
+// Custom CSS variables
 :root {
-  --card-text-color: #{$gray-800}; // Light mode: darker text
+  // Card text color (responds to color scheme)
+  --card-text-color: #{pico-colors.$zinc-800}; // Light mode: darker text
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --card-text-color: #{$gray-200}; // Dark mode: lighter text
+    --card-text-color: #{pico-colors.$zinc-200}; // Dark mode: lighter text
   }
 }

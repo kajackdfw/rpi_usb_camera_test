@@ -2,200 +2,166 @@
 
 {% block title %}Settings{% endblock %}
 
+{% block head %}
+<!-- Settings-specific CSS (includes main.css via @forward) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/settings.min.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="max-w-2xl mx-auto">
-    <h1 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-100">
-        Settings
-    </h1>
+<div class="settings-container">
+    <h1>Settings</h1>
 
     <!-- Rover Name Card -->
-    <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6 mb-6">
-        <h2 class="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
-            This Rover
-        </h2>
-        <div class="flex items-center gap-4">
-            <label for="rover-name" class="text-gray-600 dark:text-gray-300 whitespace-nowrap">
-                Rover Name
-            </label>
+    <section class="settings-card">
+        <h2>This Rover</h2>
+        <div class="form-inline">
+            <label for="rover-name">Rover Name</label>
             <input type="text"
                    id="rover-name"
-                   class="flex-1 px-3 py-2 bg-gray-100 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary"
                    placeholder="Cattern Rover LAN">
-            <button id="save-rover-name"
-                    class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-md transition-colors text-sm font-medium">
-                Save
-            </button>
+            <button id="save-rover-name">Save</button>
         </div>
-        <p id="rover-name-status" class="mt-2 text-sm text-green-500 hidden">Saved!</p>
-    </div>
+        <p id="rover-name-status" class="status-message success hidden">Saved!</p>
+    </section>
 
     <!-- Cloud Configuration Card -->
-    <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6 mb-6">
-        <h2 class="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
-            Cloud Configuration
-        </h2>
-        <div class="space-y-4">
-            <div>
-                <label for="cloud-location" class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                    Cloud Location
-                </label>
+    <section class="settings-card">
+        <h2>Cloud Configuration</h2>
+        <div class="form-grid">
+            <label for="cloud-location">
+                Cloud Location
                 <input type="text"
                        id="cloud-location"
-                       class="w-full px-3 py-2 bg-gray-100 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary"
                        placeholder="https://cattern.com">
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Base URL of your cloud server</p>
-            </div>
+                <small>Base URL of your cloud server</small>
+            </label>
 
-            <div>
-                <label for="rover-ip" class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                    This Rover's Public IP
-                </label>
-                <div class="flex gap-2">
+            <label for="rover-ip">
+                This Rover's Public IP
+                <div class="input-group">
                     <input type="text"
                            id="rover-ip"
-                           class="flex-1 px-3 py-2 bg-gray-100 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md text-gray-900 dark:text-gray-100"
                            readonly>
-                    <button id="refresh-ip-btn"
-                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors text-sm font-medium whitespace-nowrap">
-                        🔄 Refresh
-                    </button>
+                    <button id="refresh-ip-btn" class="secondary">🔄 Refresh</button>
                 </div>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Automatically detected on startup. Click Refresh to update.</p>
-            </div>
+                <small>Automatically detected on startup. Click Refresh to update.</small>
+            </label>
 
-            <button id="save-cloud-config-btn"
-                    class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors text-sm font-medium">
-                💾 Save Cloud Configuration
-            </button>
-            <p id="cloud-config-status" class="text-sm text-green-500 hidden">Saved!</p>
+            <button id="save-cloud-config-btn">💾 Save Cloud Configuration</button>
+            <p id="cloud-config-status" class="status-message success hidden">Saved!</p>
         </div>
-    </div>
+    </section>
 
     <!-- Camera Configuration Card -->
-    <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6 mb-6">
-        <h2 class="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
-            Camera Configuration
-        </h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4 text-sm">
-            Configure up to 3 camera slots. Assign video devices and set camera types.
-        </p>
+    <section class="settings-card">
+        <h2>Camera Configuration</h2>
+        <p><small>Configure up to 3 camera slots. Assign video devices and set camera types.</small></p>
 
         <!-- Camera Slots Configuration -->
-        <div id="camera-slots" class="space-y-4">
+        <div id="camera-slots">
             <!-- Camera Slot 1 -->
-            <div class="camera-slot-config p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
-                <h3 class="font-semibold mb-3 text-gray-800 dark:text-gray-100">Camera Slot 1</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <fieldset class="camera-slot-config">
+                <legend>Camera Slot 1</legend>
+                <div>
+                    <label for="camera1-device">Video Device</label>
+                    <select id="camera1-device">
+                        <option value="">Not Assigned</option>
+                    </select>
+                </div>
+                <div class="grid">
                     <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Video Device</label>
-                        <select id="camera1-device" class="w-full p-2 border rounded-lg bg-white dark:bg-slate-600 border-gray-300 dark:border-slate-500 text-gray-900 dark:text-gray-100">
-                            <option value="">Not Assigned</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Camera Type</label>
-                        <select id="camera1-type" class="w-full p-2 border rounded-lg bg-white dark:bg-slate-600 border-gray-300 dark:border-slate-500 text-gray-900 dark:text-gray-100">
+                        <label for="camera1-type">Camera Type</label>
+                        <select id="camera1-type">
                             <option value="W">Wide Angle (W)</option>
                             <option value="N" selected>Normal (N)</option>
                             <option value="IR">Infrared (IR)</option>
                             <option value="T">Telephoto (T)</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Enabled</label>
-                        <input type="checkbox" id="camera1-enabled" class="w-6 h-6 rounded border-gray-300 dark:border-slate-500">
-                    </div>
+                    <label>
+                        Enabled
+                        <input type="checkbox" id="camera1-enabled" role="switch">
+                    </label>
                 </div>
-            </div>
+            </fieldset>
 
             <!-- Camera Slot 2 -->
-            <div class="camera-slot-config p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
-                <h3 class="font-semibold mb-3 text-gray-800 dark:text-gray-100">Camera Slot 2</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <fieldset class="camera-slot-config">
+                <legend>Camera Slot 2</legend>
+                <div>
+                    <label for="camera2-device">Video Device</label>
+                    <select id="camera2-device">
+                        <option value="">Not Assigned</option>
+                    </select>
+                </div>
+                <div class="grid">
                     <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Video Device</label>
-                        <select id="camera2-device" class="w-full p-2 border rounded-lg bg-white dark:bg-slate-600 border-gray-300 dark:border-slate-500 text-gray-900 dark:text-gray-100">
-                            <option value="">Not Assigned</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Camera Type</label>
-                        <select id="camera2-type" class="w-full p-2 border rounded-lg bg-white dark:bg-slate-600 border-gray-300 dark:border-slate-500 text-gray-900 dark:text-gray-100">
+                        <label for="camera2-type">Camera Type</label>
+                        <select id="camera2-type">
                             <option value="W">Wide Angle (W)</option>
                             <option value="N" selected>Normal (N)</option>
                             <option value="IR">Infrared (IR)</option>
                             <option value="T">Telephoto (T)</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Enabled</label>
-                        <input type="checkbox" id="camera2-enabled" class="w-6 h-6 rounded border-gray-300 dark:border-slate-500">
-                    </div>
+                    <label>
+                        Enabled
+                        <input type="checkbox" id="camera2-enabled" role="switch">
+                    </label>
                 </div>
-            </div>
+            </fieldset>
 
             <!-- Camera Slot 3 -->
-            <div class="camera-slot-config p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
-                <h3 class="font-semibold mb-3 text-gray-800 dark:text-gray-100">Camera Slot 3</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <fieldset class="camera-slot-config">
+                <legend>Camera Slot 3</legend>
+                <div>
+                    <label for="camera3-device">Video Device</label>
+                    <select id="camera3-device">
+                        <option value="">Not Assigned</option>
+                    </select>
+                </div>
+                <div class="grid">
                     <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Video Device</label>
-                        <select id="camera3-device" class="w-full p-2 border rounded-lg bg-white dark:bg-slate-600 border-gray-300 dark:border-slate-500 text-gray-900 dark:text-gray-100">
-                            <option value="">Not Assigned</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Camera Type</label>
-                        <select id="camera3-type" class="w-full p-2 border rounded-lg bg-white dark:bg-slate-600 border-gray-300 dark:border-slate-500 text-gray-900 dark:text-gray-100">
+                        <label for="camera3-type">Camera Type</label>
+                        <select id="camera3-type">
                             <option value="W">Wide Angle (W)</option>
                             <option value="N" selected>Normal (N)</option>
                             <option value="IR">Infrared (IR)</option>
                             <option value="T">Telephoto (T)</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Enabled</label>
-                        <input type="checkbox" id="camera3-enabled" class="w-6 h-6 rounded border-gray-300 dark:border-slate-500">
-                    </div>
+                    <label>
+                        Enabled
+                        <input type="checkbox" id="camera3-enabled" role="switch">
+                    </label>
                 </div>
-            </div>
+            </fieldset>
         </div>
 
         <!-- Buttons -->
-        <div class="flex gap-3 mt-4">
-            <button id="scan-devices-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium">
-                🔍 Scan for Cameras
-            </button>
-            <button id="save-cameras-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium">
-                💾 Save Camera Configuration
-            </button>
+        <div class="button-group">
+            <button id="scan-devices-btn" class="secondary">🔍 Scan for Cameras</button>
+            <button id="save-cameras-btn">💾 Save Camera Configuration</button>
         </div>
-        <p id="camera-config-status" class="mt-2 text-sm text-green-500 hidden">Saved!</p>
-    </div>
+        <p id="camera-config-status" class="status-message success hidden">Saved!</p>
+    </section>
 
     <!-- Active Camera Status Card -->
-    <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6 mb-6">
-        <h2 class="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
-            Active Camera Status
-        </h2>
-        <div id="active-camera-status" class="text-gray-600 dark:text-gray-300">
+    <section class="settings-card">
+        <h2>Active Camera Status</h2>
+        <div id="active-camera-status">
             Loading...
         </div>
-    </div>
+    </section>
 
     <!-- Theme Settings Card -->
-    <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
-        <h2 class="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
-            Appearance
-        </h2>
-        <div class="flex items-center justify-between">
-            <span class="text-gray-600 dark:text-gray-300">Dark Mode</span>
-            <button id="settings-theme-toggle"
-                    class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors bg-gray-300 dark:bg-blue-600">
-                <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1 dark:translate-x-6"></span>
-            </button>
-        </div>
-    </div>
+    <section class="settings-card">
+        <h2>Appearance</h2>
+        <label>
+            <input type="checkbox" id="settings-theme-toggle" role="switch">
+            Dark Mode
+        </label>
+    </section>
 </div>
 {% endblock %}
 
@@ -234,14 +200,14 @@
 
             // Show saved status
             statusEl.textContent = 'Saved!';
-            statusEl.className = 'mt-2 text-sm text-green-500';
-            statusEl.classList.remove('hidden');
+            statusEl.classList.remove('hidden', 'error');
+            statusEl.classList.add('success');
             setTimeout(() => statusEl.classList.add('hidden'), 2000);
         })
         .catch(() => {
             statusEl.textContent = 'Failed to save';
-            statusEl.className = 'mt-2 text-sm text-red-500';
-            statusEl.classList.remove('hidden');
+            statusEl.classList.remove('hidden', 'success');
+            statusEl.classList.add('error');
             setTimeout(() => statusEl.classList.add('hidden'), 2000);
         });
     });
@@ -321,19 +287,19 @@
             if (data.success) {
                 roverSettings.cameras = data.cameras;
                 statusEl.textContent = '✓ Camera configuration saved successfully!';
-                statusEl.className = 'mt-2 text-sm text-green-500';
-                statusEl.classList.remove('hidden');
+                statusEl.classList.remove('hidden', 'error');
+                statusEl.classList.add('success');
                 setTimeout(() => statusEl.classList.add('hidden'), 3000);
             } else {
                 statusEl.textContent = '✗ Error: ' + (data.error || 'Unknown error');
-                statusEl.className = 'mt-2 text-sm text-red-500';
-                statusEl.classList.remove('hidden');
+                statusEl.classList.remove('hidden', 'success');
+                statusEl.classList.add('error');
                 setTimeout(() => statusEl.classList.add('hidden'), 5000);
             }
         } catch (error) {
             statusEl.textContent = '✗ Failed to save camera configuration';
-            statusEl.className = 'mt-2 text-sm text-red-500';
-            statusEl.classList.remove('hidden');
+            statusEl.classList.remove('hidden', 'success');
+            statusEl.classList.add('error');
             setTimeout(() => statusEl.classList.add('hidden'), 5000);
         }
     });
@@ -362,45 +328,56 @@
                 };
 
                 statusEl.innerHTML = `
-                    <div class="space-y-2">
-                        <p><span class="font-medium">Active Camera:</span>
-                           <span class="text-blue-600 dark:text-blue-400">Slot ${activeSlot}</span>
-                           <span class="ml-2 text-xs bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded">${typeNames[cameraConfig?.type] || 'Normal'}</span></p>
-                        <p><span class="font-medium">Device:</span>
-                           ${cameraConfig?.device || 'Unknown'}</p>
-                        <p><span class="font-medium">Status:</span>
-                           <span class="text-green-500">Running</span></p>
-                        <p><span class="font-medium">Resolution:</span>
-                           ${data.properties?.width || 'N/A'} x ${data.properties?.height || 'N/A'}</p>
-                        <p><span class="font-medium">FPS:</span>
-                           ${data.properties?.fps?.toFixed(1) || 'N/A'}</p>
-                        <p><span class="font-medium">Frames captured:</span>
-                           ${data.frame_count || 0}</p>
-                    </div>
+                    <dl>
+                        <dt>Active Camera:</dt>
+                        <dd><mark>Slot ${activeSlot}</mark> <small>(${typeNames[cameraConfig?.type] || 'Normal'})</small></dd>
+                        <dt>Device:</dt>
+                        <dd>${cameraConfig?.device || 'Unknown'}</dd>
+                        <dt>Status:</dt>
+                        <dd><ins>Running</ins></dd>
+                        <dt>Resolution:</dt>
+                        <dd>${data.properties?.width || 'N/A'} x ${data.properties?.height || 'N/A'}</dd>
+                        <dt>FPS:</dt>
+                        <dd>${data.properties?.fps?.toFixed(1) || 'N/A'}</dd>
+                        <dt>Frames captured:</dt>
+                        <dd>${data.frame_count || 0}</dd>
+                    </dl>
                 `;
             } else if (activeSlot) {
                 statusEl.innerHTML = `
-                    <p><span class="font-medium">Active Camera:</span>
-                       <span class="text-blue-600 dark:text-blue-400">Slot ${activeSlot}</span></p>
-                    <p><span class="font-medium">Status:</span>
-                       <span class="text-red-500">${data.status}</span></p>
+                    <dl>
+                        <dt>Active Camera:</dt>
+                        <dd><mark>Slot ${activeSlot}</mark></dd>
+                        <dt>Status:</dt>
+                        <dd><del>${data.status}</del></dd>
+                    </dl>
                 `;
             } else {
                 statusEl.innerHTML = `
-                    <p><span class="font-medium">Status:</span>
-                       <span class="text-gray-500">No active camera - configure and switch to a camera on the Streams page</span></p>
+                    <p><strong>Status:</strong> No active camera - configure and switch to a camera on the Streams page</p>
                 `;
             }
         })
         .catch(() => {
             document.getElementById('active-camera-status').innerHTML =
-                '<p><span class="font-medium">Status:</span> <span class="text-red-500">Failed to load</span></p>';
+                '<p><strong>Status:</strong> <del>Failed to load</del></p>';
         });
 
     // Settings theme toggle (syncs with navbar toggle)
     const settingsToggle = document.getElementById('settings-theme-toggle');
-    settingsToggle.addEventListener('click', () => {
+
+    // Initialize switch state
+    settingsToggle.checked = document.documentElement.getAttribute('data-theme') === 'dark';
+
+    settingsToggle.addEventListener('change', () => {
         document.getElementById('theme-toggle').click();
+    });
+
+    // Update switch when theme changes from navbar
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+        setTimeout(() => {
+            settingsToggle.checked = document.documentElement.getAttribute('data-theme') === 'dark';
+        }, 50);
     });
 
     // Refresh IP button
@@ -420,21 +397,21 @@
 
                 const statusEl = document.getElementById('cloud-config-status');
                 statusEl.textContent = '✓ IP refreshed: ' + data.ip;
-                statusEl.className = 'text-sm text-green-500';
-                statusEl.classList.remove('hidden');
+                statusEl.classList.remove('hidden', 'error');
+                statusEl.classList.add('success');
                 setTimeout(() => statusEl.classList.add('hidden'), 3000);
             } else {
                 const statusEl = document.getElementById('cloud-config-status');
                 statusEl.textContent = '✗ Failed to refresh IP: ' + (data.error || 'Unknown error');
-                statusEl.className = 'text-sm text-red-500';
-                statusEl.classList.remove('hidden');
+                statusEl.classList.remove('hidden', 'success');
+                statusEl.classList.add('error');
                 setTimeout(() => statusEl.classList.add('hidden'), 5000);
             }
         } catch (error) {
             const statusEl = document.getElementById('cloud-config-status');
             statusEl.textContent = '✗ Network error refreshing IP';
-            statusEl.className = 'text-sm text-red-500';
-            statusEl.classList.remove('hidden');
+            statusEl.classList.remove('hidden', 'success');
+            statusEl.classList.add('error');
             setTimeout(() => statusEl.classList.add('hidden'), 5000);
         } finally {
             button.textContent = originalText;
@@ -459,19 +436,19 @@
             if (response.ok) {
                 roverSettings.cloud_location = data.cloud_location;
                 statusEl.textContent = '✓ Cloud configuration saved!';
-                statusEl.className = 'text-sm text-green-500';
-                statusEl.classList.remove('hidden');
+                statusEl.classList.remove('hidden', 'error');
+                statusEl.classList.add('success');
                 setTimeout(() => statusEl.classList.add('hidden'), 3000);
             } else {
                 statusEl.textContent = '✗ Failed to save';
-                statusEl.className = 'text-sm text-red-500';
-                statusEl.classList.remove('hidden');
+                statusEl.classList.remove('hidden', 'success');
+                statusEl.classList.add('error');
                 setTimeout(() => statusEl.classList.add('hidden'), 3000);
             }
         } catch (error) {
             statusEl.textContent = '✗ Network error';
-            statusEl.className = 'text-sm text-red-500';
-            statusEl.classList.remove('hidden');
+            statusEl.classList.remove('hidden', 'success');
+            statusEl.classList.add('error');
             setTimeout(() => statusEl.classList.add('hidden'), 3000);
         }
     });

@@ -43,22 +43,47 @@ scss/
 <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 ```
 
-## Customizing Pico CSS
+## Color System
 
-To customize Pico CSS:
+This project uses Pico CSS colors directly via the `pico-colors` namespace:
 
-1. Copy SCSS files from `vendor_packages/pico-main/scss/` to `scss/pico-custom/`
-2. Modify variables and import in your main SCSS
-3. The extension will compile your customized version
-
-Example `scss/main.scss`:
 ```scss
-// Override Pico variables
-$primary-color: #0f4c75;
+// Import Pico colors
+@use '../vendor_packages/pico-main/scss/colors' as pico-colors;
 
-// Import Pico
-@import '../vendor_packages/pico-main/scss/pico';
+// Use Pico colors directly
+background: pico-colors.$zinc-200;
+color: pico-colors.$orange-450;
+border: 1px solid pico-colors.$jade-600;
+```
 
-// Your custom styles
-@import 'components/navbar';
+### Available Color Palettes
+
+Each palette has 19 shades (950-50):
+- **Zinc** (`$zinc-###`): Grays for backgrounds, text, borders
+- **Orange** (`$orange-###`): Brand colors
+- **Jade** (`$jade-###`): Success/emerald colors
+- **Azure** (`$azure-###`): Primary/blue colors
+- **Red, Pink, Fuchsia, Purple, Violet, Indigo, Blue, Cyan, Teal, Green, Lime, Yellow, Amber**: See `vendor_packages/pico-main/scss/colors/_index.scss`
+
+### Semantic Variables
+
+The `_variables.scss` file provides semantic color names:
+
+```scss
+// Gray colors
+$gray-950 through $gray-50
+$gray (default: $gray-500)
+
+// Brand colors (orange)
+$brand-950 through $brand-50
+$brand (default: $brand-450)
+
+// Success colors (jade)
+$success-950 through $success-50
+$success (default: $success-400)
+
+// Primary colors (azure)
+$primary (azure-700)
+$primary-hover (azure-600)
 ```
