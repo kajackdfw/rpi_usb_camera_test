@@ -1,0 +1,17 @@
+{
+  "name": "rpi-camera-stream",
+  "version": "1.0.0",
+  "description": "Raspberry Pi USB camera streaming server",
+  "private": true,
+  "scripts": {
+    "sass:build": "sass scss:src/rpi_camera_stream/static/css --style=expanded --no-source-map",
+    "sass:build:min": "sass scss:src/rpi_camera_stream/static/css --style=compressed --no-source-map",
+    "sass:watch": "sass --watch scss:src/rpi_camera_stream/static/css --style=expanded --no-source-map",
+    "sass:watch:min": "sass --watch scss:src/rpi_camera_stream/static/css --style=compressed --no-source-map"
+  },
+  "devDependencies": {
+    "sass": "^1.97.3"
+  },
+  "author": "",
+  "license": "GPL-3.0"
+}

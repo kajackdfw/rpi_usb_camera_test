@@ -1,243 +1,171 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Streams - {{ rover_name }}</title>
+{% extends "base.html" %}
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+{% block title %}Camera Streams{% endblock %}
 
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+{% block head %}
+<!-- Streams-specific CSS (includes main.css via @forward) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/streams.min.css') }}">
+{% endblock %}
 
-    <!-- Pico CSS - Conditional (supports light/dark themes) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/pico/css/pico.conditional.min.css') }}">
+{% block content %}
+<div class="content-container">
+    <h1>{{ rover_name }} - LAN Cameras</h1>
 
-    <!-- Custom SCSS compiled CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/streams.min.css') }}">
-
-    <!-- Dark mode initialization (before render to prevent flash) -->
-    <script>
-        // Initialize theme from localStorage or system preference
-        const savedTheme = localStorage.getItem('theme');
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', initialTheme);
-    </script>
-</head>
-<body>
-    <!-- Navbar -->
-    <nav>
-        <div class="container">
-            <ul>
-                <li><strong><a href="/lan/" class="contrast">{{ rover_name }}</a></strong></li>
-            </ul>
-            <ul>
-                <li><a href="/lan/">Home</a></li>
-                <li><a href="/lan/settings">Settings</a></li>
-                <li><a href="/lan/streams">LAN Streams</a></li>
-                <li>
-                    <button id="theme-toggle" class="contrast outline" aria-label="Toggle theme" data-tooltip="Toggle dark mode">
-                        <i id="theme-icon" data-lucide="moon" style="width: 1.25rem; height: 1.25rem;"></i>
-                    </button>
-                </li>
-            </ul>
+    <div class="camera-grid">
+    {% for camera in cameras %}
+    <article class="camera-card">
+        <div class="camera-card-header">
+            <h3>
+                <span>Slot {{ camera.slot }}</span>
+                {% if camera.enabled %}
+                <span class="camera-type-badge">{{ camera.type }}</span>
+                {% endif %}
+            </h3>
+            <div class="camera-subtitle">
+                {{ camera.name }}
+            </div>
         </div>
-    </nav>
 
-    <!-- Main Content -->
-    <main class="container">
-        <header class="page-header">
-            <h1>{{ rover_name }}</h1>
-            <p>Camera Streams Overview</p>
-        </header>
-
-        <div class="camera-grid">
-            {% for camera in cameras %}
-            <article class="camera-card">
-                <div class="camera-card-header">
-                    <h3>
-                        <span>Slot {{ camera.slot }}</span>
-                        {% if camera.enabled %}
-                        <span class="camera-type-badge">{{ camera.type }}</span>
-                        {% endif %}
-                    </h3>
-                    <div class="camera-subtitle">
-                        {{ camera.name }}
-                    </div>
+        {% if camera.active %}
+        <!-- Active camera - show live snapshot -->
+        <div class="camera-snapshot" onclick="location.href='/lan/stream/{{ camera.slot }}'">
+            <img id="snapshot-{{ camera.slot }}"
+                 src="/lan/api/snapshot?t={{ range(1, 10000) | random }}"
+                 alt="{{ camera.name }} Snapshot">
+            <div class="snapshot-overlay">
+                Click to view live stream
+            </div>
+        </div>
+        {% else %}
+        <!-- Inactive camera -->
+        <div class="camera-snapshot inactive">
+            {% if camera.has_snapshot %}
+            <!-- Show last captured frame -->
+            <img src="/lan/api/snapshot/{{ camera.slot }}?t={{ range(1, 10000) | random }}"
+                 alt="{{ camera.name }} Last Frame">
+            <div class="last-frame-badge">Last frame</div>
+            {% else %}
+            <!-- Show placeholder -->
+            <div class="camera-placeholder">
+                <div class="placeholder-icon">📷</div>
+                <div class="placeholder-text">
+                    {% if camera.enabled %}
+                        {% if camera.exists %}Camera Interface {{ camera.device }}{% else %}Device Not Found{% endif %}
+                    {% else %}
+                        Not Configured
+                    {% endif %}
                 </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
 
+        <div class="camera-actions">
+            <div class="status-badge w-1-3 {% if camera.active %}active{% else %}inactive{% endif %}">
+                <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
+                    {% if camera.active %}
+                        <i data-lucide="toggle-right" style="width: 1.125rem; height: 1.125rem;"></i>
+                        <span>Active</span>
+                    {% else %}
+                        <i data-lucide="toggle-left" style="width: 1.125rem; height: 1.125rem;"></i>
+                        <span>Inactive</span>
+                    {% endif %}
+                </span>
+            </div>
+
+            {% if camera.enabled %}
                 {% if camera.active %}
-                <!-- Active camera - show live snapshot -->
-                <div class="camera-snapshot" onclick="location.href='/lan/stream/{{ camera.slot }}'">
-                    <img id="snapshot-{{ camera.slot }}"
-                         src="/lan/api/snapshot?t={{ range(1, 10000) | random }}"
-                         alt="{{ camera.name }} Snapshot">
-                    <div class="snapshot-overlay">
-                        Click to view live stream
-                    </div>
+                <!-- Already streaming this camera -->
+                <div class="btn-wrapper w-2-3">
+                    <a href="/lan/stream/{{ camera.slot }}" role="button" class="primary">
+                        <span style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                            <i data-lucide="video" style="width: 1.25rem; height: 1.25rem;"></i>
+                            <span>View Stream</span>
+                        </span>
+                    </a>
                 </div>
                 {% else %}
-                <!-- Inactive camera -->
-                <div class="camera-snapshot inactive">
-                    {% if camera.has_snapshot %}
-                    <!-- Show last captured frame -->
-                    <img src="/lan/api/snapshot/{{ camera.slot }}?t={{ range(1, 10000) | random }}"
-                         alt="{{ camera.name }} Last Frame">
-                    <div class="last-frame-badge">Last frame</div>
-                    {% else %}
-                    <!-- Show placeholder -->
-                    <div class="camera-placeholder">
-                        <div class="placeholder-icon">📷</div>
-                        <div class="placeholder-text">
-                            {% if camera.enabled %}
-                                {% if camera.exists %}Camera Interface {{ camera.device }}{% else %}Device Not Found{% endif %}
-                            {% else %}
-                                Not Configured
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endif %}
+                <!-- Can switch to this camera -->
+                <div class="btn-wrapper w-2-3">
+                    <button class="primary" onclick="switchCamera({{ camera.slot }})">
+                        <span style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                            <i data-lucide="camera" style="width: 1.25rem; height: 1.25rem;"></i>
+                            <span>Use this Camera</span>
+                        </span>
+                    </button>
                 </div>
                 {% endif %}
-
-                <div class="camera-actions">
-                    <div class="status-badge w-1-3 {% if camera.active %}active{% else %}inactive{% endif %}">
-                        <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
-                            {% if camera.active %}
-                                <i data-lucide="toggle-right" style="width: 1.125rem; height: 1.125rem;"></i>
-                                <span>Active</span>
-                            {% else %}
-                                <i data-lucide="toggle-left" style="width: 1.125rem; height: 1.125rem;"></i>
-                                <span>Inactive</span>
-                            {% endif %}
-                        </span>
-                    </div>
-
-                    {% if camera.enabled %}
-                        {% if camera.active %}
-                        <!-- Already streaming this camera -->
-                        <div class="btn-wrapper w-2-3">
-                            <a href="/lan/stream/{{ camera.slot }}" role="button" class="primary">
-                                <span style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
-                                    <i data-lucide="video" style="width: 1.25rem; height: 1.25rem;"></i>
-                                    <span>View Stream</span>
-                                </span>
-                            </a>
-                        </div>
-                        {% else %}
-                        <!-- Can switch to this camera -->
-                        <div class="btn-wrapper w-2-3">
-                            <button class="primary" onclick="switchCamera({{ camera.slot }})">
-                                <span style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
-                                    <i data-lucide="camera" style="width: 1.25rem; height: 1.25rem;"></i>
-                                    <span>Use this Camera</span>
-                                </span>
-                            </button>
-                        </div>
-                        {% endif %}
-                    {% else %}
-                    <!-- Camera not configured -->
-                    <div class="btn-wrapper">
-                        <a href="/lan/settings" role="button">
-                            ⚙️ Configure
-                        </a>
-                    </div>
-                    {% endif %}
-                </div>
-
-                <div class="camera-info">
-                    <div><strong>Device:</strong> {{ camera.device }}</div>
-                    {% if camera.enabled %}
-                        <div><strong>Type:</strong> {{ camera.type_name }}</div>
-                        {% if camera.exists %}
-                            {% if camera.model_id and camera.vendor_id %}
-                            <div><strong>USB ID:</strong> {{ camera.vendor_id }}:{{ camera.model_id }}</div>
-                            {% endif %}
-                        {% else %}
-                            <div><strong>USB ID:</strong> n/a</div>
-                        {% endif %}
-                    {% else %}
-                        <div><strong>Type:</strong> Not Set</div>
-                        <div><strong>USB ID:</strong> n/a</div>
-                    {% endif %}
-                </div>
-            </article>
-            {% endfor %}
+            {% else %}
+            <!-- Camera not configured -->
+            <div class="btn-wrapper">
+                <a href="/lan/settings" role="button">
+                    ⚙️ Configure
+                </a>
+            </div>
+            {% endif %}
         </div>
-    </main>
 
-    <script>
-        // Theme toggle functionality
-        const themeToggle = document.getElementById('theme-toggle');
+        <div class="camera-info">
+            <div><strong>Device:</strong> {{ camera.device }}</div>
+            {% if camera.enabled %}
+                <div><strong>Type:</strong> {{ camera.type_name }}</div>
+                {% if camera.exists %}
+                    {% if camera.model_id and camera.vendor_id %}
+                    <div><strong>USB ID:</strong> {{ camera.vendor_id }}:{{ camera.model_id }}</div>
+                    {% endif %}
+                {% else %}
+                    <div><strong>USB ID:</strong> n/a</div>
+                {% endif %}
+            {% else %}
+                <div><strong>Type:</strong> Not Set</div>
+                <div><strong>USB ID:</strong> n/a</div>
+            {% endif %}
+        </div>
+    </article>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}
 
-        function updateThemeIcon(theme) {
-            const iconName = theme === 'dark' ? 'sun' : 'moon';
-            const container = document.getElementById('theme-icon');
+{% block scripts %}
+<script>
+    // List of active camera slots (generated server-side)
+    const activeCameras = {{ (cameras | selectattr('active') | map(attribute='slot') | list) | tojson }};
 
-            // Replace with new icon HTML
-            container.outerHTML = `<i id="theme-icon" data-lucide="${iconName}" style="width: 1.25rem; height: 1.25rem;"></i>`;
-
-            // Reinitialize only the new icon
-            lucide.createIcons();
-        }
-
-        // Initialize icon
-        updateThemeIcon(document.documentElement.getAttribute('data-theme'));
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeIcon(newTheme);
+    // Auto-refresh snapshots every 5 seconds for active cameras only
+    setInterval(() => {
+        activeCameras.forEach(slot => {
+            refreshSnapshot(slot);
         });
+    }, 5000);
 
-        // List of active camera slots (generated server-side)
-        const activeCameras = {{ (cameras | selectattr('active') | map(attribute='slot') | list) | tojson }};
+    function refreshSnapshot(slot) {
+        const img = document.getElementById('snapshot-' + slot);
+        if (img) {
+            // Add timestamp to prevent caching
+            const timestamp = new Date().getTime();
+            img.src = '/lan/api/snapshot?t=' + timestamp;
+        }
+    }
 
-        // Auto-refresh snapshots every 5 seconds for active cameras only
-        setInterval(() => {
-            activeCameras.forEach(slot => {
-                refreshSnapshot(slot);
+    async function switchCamera(slot) {
+        try {
+            const response = await fetch('/api/switch-camera', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ slot: slot })
             });
-        }, 5000);
 
-        function refreshSnapshot(slot) {
-            const img = document.getElementById('snapshot-' + slot);
-            if (img) {
-                // Add timestamp to prevent caching
-                const timestamp = new Date().getTime();
-                img.src = '/lan/api/snapshot?t=' + timestamp;
+            const data = await response.json();
+
+            if (data.success) {
+                location.reload();  // Reload to update UI
+            } else {
+                alert('✗ Error: ' + (data.error || 'Failed to switch camera'));
             }
+        } catch (error) {
+            alert('✗ Network error: ' + error.message);
         }
-
-        async function switchCamera(slot) {
-            try {
-                const response = await fetch('/api/switch-camera', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ slot: slot })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    location.reload();  // Reload to update UI
-                } else {
-                    alert('✗ Error: ' + (data.error || 'Failed to switch camera'));
-                }
-            } catch (error) {
-                alert('✗ Network error: ' + error.message);
-            }
-        }
-    </script>
-
-    <!-- Initialize Lucide Icons -->
-    <script>
-        lucide.createIcons();
-    </script>
-</body>
-</html>
+    }
+</script>
+{% endblock %}

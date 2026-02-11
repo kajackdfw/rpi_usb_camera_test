@@ -14,10 +14,17 @@ $primary-hover: pico-colors.$azure-600; // #02659a (close to original #1a6ba0)
 // Spacing
 $spacing-unit: 1rem;
 
-// Breakpoints
-$breakpoint-mobile: 640px;
-$breakpoint-tablet: 768px;
-$breakpoint-desktop: 1024px;
+// Breakpoints (aligned with Pico CSS v2)
+$breakpoint-sm: 576px;   // Small - landscape phones
+$breakpoint-md: 768px;   // Medium - tablets
+$breakpoint-lg: 1024px;  // Large - laptops
+$breakpoint-xl: 1280px;  // Extra Large - desktops
+$breakpoint-xxl: 1536px; // XXL - large desktops
+
+// Legacy aliases (for backwards compatibility)
+$breakpoint-mobile: $breakpoint-sm;
+$breakpoint-tablet: $breakpoint-md;
+$breakpoint-desktop: $breakpoint-lg;
 
 // Gray colors (Pico CSS style scale based on zinc palette)
 // Full scale from 950 (darkest) to 50 (lightest)

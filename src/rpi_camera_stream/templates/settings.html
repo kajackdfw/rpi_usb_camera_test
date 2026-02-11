@@ -8,48 +8,51 @@
 {% endblock %}
 
 {% block content %}
-<div class="settings-container">
+<div class="content-container">
     <h1>Settings</h1>
 
     <!-- Rover Name Card -->
     <section class="settings-card">
         <h2>This Rover</h2>
-        <div class="form-inline">
+        <form class="form-inline">
             <label for="rover-name">Rover Name</label>
             <input type="text"
                    id="rover-name"
+                   name="rover-name"
                    placeholder="Cattern Rover LAN">
-            <button id="save-rover-name">Save</button>
-        </div>
+            <button type="button" id="save-rover-name">Save</button>
+        </form>
         <p id="rover-name-status" class="status-message success hidden">Saved!</p>
     </section>
 
     <!-- Cloud Configuration Card -->
     <section class="settings-card">
         <h2>Cloud Configuration</h2>
-        <div class="form-grid">
-            <label for="cloud-location">
+        <form class="form-grid">
+            <label>
                 Cloud Location
                 <input type="text"
                        id="cloud-location"
+                       name="cloud-location"
                        placeholder="https://cattern.com">
                 <small>Base URL of your cloud server</small>
             </label>
 
-            <label for="rover-ip">
+            <label>
                 This Rover's Public IP
                 <div class="input-group">
                     <input type="text"
                            id="rover-ip"
+                           name="rover-ip"
                            readonly>
-                    <button id="refresh-ip-btn" class="secondary">🔄 Refresh</button>
+                    <button type="button" id="refresh-ip-btn" class="secondary">🔄 Refresh</button>
                 </div>
                 <small>Automatically detected on startup. Click Refresh to update.</small>
             </label>
 
-            <button id="save-cloud-config-btn">💾 Save Cloud Configuration</button>
+            <button type="button" id="save-cloud-config-btn">💾 Save Cloud Configuration</button>
             <p id="cloud-config-status" class="status-message success hidden">Saved!</p>
-        </div>
+        </form>
     </section>
 
     <!-- Camera Configuration Card -->
@@ -62,25 +65,25 @@
             <!-- Camera Slot 1 -->
             <fieldset class="camera-slot-config">
                 <legend>Camera Slot 1</legend>
-                <div>
-                    <label for="camera1-device">Video Device</label>
-                    <select id="camera1-device">
+                <label>
+                    Video Device
+                    <select id="camera1-device" name="camera1-device">
                         <option value="">Not Assigned</option>
                     </select>
-                </div>
+                </label>
                 <div class="grid">
-                    <div>
-                        <label for="camera1-type">Camera Type</label>
-                        <select id="camera1-type">
+                    <label>
+                        Camera Type
+                        <select id="camera1-type" name="camera1-type">
                             <option value="W">Wide Angle (W)</option>
                             <option value="N" selected>Normal (N)</option>
                             <option value="IR">Infrared (IR)</option>
                             <option value="T">Telephoto (T)</option>
                         </select>
-                    </div>
+                    </label>
                     <label>
                         Enabled
-                        <input type="checkbox" id="camera1-enabled" role="switch">
+                        <input type="checkbox" id="camera1-enabled" name="camera1-enabled" role="switch">
                     </label>
                 </div>
             </fieldset>
@@ -88,25 +91,25 @@
             <!-- Camera Slot 2 -->
             <fieldset class="camera-slot-config">
                 <legend>Camera Slot 2</legend>
-                <div>
-                    <label for="camera2-device">Video Device</label>
-                    <select id="camera2-device">
+                <label>
+                    Video Device
+                    <select id="camera2-device" name="camera2-device">
                         <option value="">Not Assigned</option>
                     </select>
-                </div>
+                </label>
                 <div class="grid">
-                    <div>
-                        <label for="camera2-type">Camera Type</label>
-                        <select id="camera2-type">
+                    <label>
+                        Camera Type
+                        <select id="camera2-type" name="camera2-type">
                             <option value="W">Wide Angle (W)</option>
                             <option value="N" selected>Normal (N)</option>
                             <option value="IR">Infrared (IR)</option>
                             <option value="T">Telephoto (T)</option>
                         </select>
-                    </div>
+                    </label>
                     <label>
                         Enabled
-                        <input type="checkbox" id="camera2-enabled" role="switch">
+                        <input type="checkbox" id="camera2-enabled" name="camera2-enabled" role="switch">
                     </label>
                 </div>
             </fieldset>
@@ -114,25 +117,25 @@
             <!-- Camera Slot 3 -->
             <fieldset class="camera-slot-config">
                 <legend>Camera Slot 3</legend>
-                <div>
-                    <label for="camera3-device">Video Device</label>
-                    <select id="camera3-device">
+                <label>
+                    Video Device
+                    <select id="camera3-device" name="camera3-device">
                         <option value="">Not Assigned</option>
                     </select>
-                </div>
+                </label>
                 <div class="grid">
-                    <div>
-                        <label for="camera3-type">Camera Type</label>
-                        <select id="camera3-type">
+                    <label>
+                        Camera Type
+                        <select id="camera3-type" name="camera3-type">
                             <option value="W">Wide Angle (W)</option>
                             <option value="N" selected>Normal (N)</option>
                             <option value="IR">Infrared (IR)</option>
                             <option value="T">Telephoto (T)</option>
                         </select>
-                    </div>
+                    </label>
                     <label>
                         Enabled
-                        <input type="checkbox" id="camera3-enabled" role="switch">
+                        <input type="checkbox" id="camera3-enabled" name="camera3-enabled" role="switch">
                     </label>
                 </div>
             </fieldset>
@@ -140,8 +143,8 @@
 
         <!-- Buttons -->
         <div class="button-group">
-            <button id="scan-devices-btn" class="secondary">🔍 Scan for Cameras</button>
-            <button id="save-cameras-btn">💾 Save Camera Configuration</button>
+            <button type="button" id="scan-devices-btn" class="secondary">🔍 Scan for Cameras</button>
+            <button type="button" id="save-cameras-btn">💾 Save Camera Configuration</button>
         </div>
         <p id="camera-config-status" class="status-message success hidden">Saved!</p>
     </section>
@@ -158,8 +161,8 @@
     <section class="settings-card">
         <h2>Appearance</h2>
         <label>
-            <input type="checkbox" id="settings-theme-toggle" role="switch">
             Dark Mode
+            <input type="checkbox" id="settings-theme-toggle" name="theme-toggle" role="switch">
         </label>
     </section>
 </div>

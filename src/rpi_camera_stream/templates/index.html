@@ -3,37 +3,20 @@
 {% block title %}LAN Home{% endblock %}
 
 {% block content %}
-<div class="hero-center">
-    <hgroup>
-        <h1>Welcome to {{ rover_name }}</h1>
-        <p>Raspberry Pi USB Camera Streaming Server</p>
-    </hgroup>
+<div class="content-container">
+    <div class="hero-center">
+        <hgroup>
+            <h1>Welcome to {{ rover_name }}</h1>
+            <p>Raspberry Pi USB Camera Streaming Server</p>
+        </hgroup>
 
-    <article class="notice-box success fade-out">
-        <p>You are accessing the LAN interface - optimized for local network viewing.</p>
-        <p>MJPEG streaming provides simple, low-latency viewing on your local network.</p>
-    </article>
-
-    <div class="button-group">
-        <a href="{{ url_for('mjpeg.streams') }}" role="button">View LAN Streams</a>
-        <a href="{{ url_for('www.index') }}" role="button" class="secondary">WWW Interface</a>
+        <div class="button-group">
+            <a href="{{ url_for('mjpeg.streams') }}" role="button">View LAN Streams</a>
+            <a href="{{ url_for('www.index') }}" role="button" class="secondary">WWW Interface</a>
+        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script>
-    // Fade out notice after 15 seconds
-    setTimeout(() => {
-        const notice = document.querySelector('.notice-box.fade-out');
-        if (notice) {
-            notice.style.opacity = '0';
-            notice.style.transition = 'opacity 1s';
-            // Remove from DOM after fade completes
-            setTimeout(() => {
-                notice.remove();
-            }, 1000);
-        }
-    }, 15000);
-</script>
 {% endblock %}

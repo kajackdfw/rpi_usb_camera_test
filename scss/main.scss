@@ -7,19 +7,6 @@
 // Variables (using @use instead of deprecated @import)
 @use 'variables' as *;
 
-// Global input/select font size override (increase from Pico CSS default)
-/* input:not([type="checkbox"]):not([type="radio"]),
-select,
-textarea {
-    font-size: 1rem !important; // 18px instead of default 16px
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    border-radius: 0.25rem;
-    border-width: 1px;
-} */
-
 // Body and content area styles
 html,
 body {
@@ -41,7 +28,7 @@ html[data-theme="dark"] body {
 .w-1-3 { width: calc((100% - 0.75rem) * 1/3); }
 .w-2-3 { width: calc((100% - 0.75rem) * 2/3); }
 
-// Width fractions (1/20 through 19/20) 
+// Width fractions (1/20 through 19/20)
 .w-1-20 { width: 5%; }
 .w-2-20 { width: 10%; }
 .w-3-20 { width: 15%; }
@@ -59,8 +46,18 @@ html[data-theme="dark"] body {
 .w-15-20 { width: 75%; }
 .w-16-20 { width: 80%; }
 .w-17-20 { width: 85%; }
-.w-18-20 { width: 90%; } 
-.w-19-20 { width: 95%; } 
+.w-18-20 { width: 90%; }
+.w-19-20 { width: 95%; }
+
+// Content Container (max-width container for content pages)
+.content-container {
+    max-width: 56rem;
+    margin: 0 auto;
+
+    > h1 {
+        margin-bottom: 2rem;
+    }
+}
 
 // Navbar styles (standardized across all pages)
 nav {
