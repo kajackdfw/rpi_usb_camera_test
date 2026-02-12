@@ -9,7 +9,7 @@
 
 {% block content %}
 <div class="content-container">
-    <h1>{{ rover_name }} - LAN Cameras</h1>
+    <h2>{{ rover_name }} - Cameras</h2>
 
     <div class="camera-grid">
     {% for camera in cameras %}
@@ -132,8 +132,11 @@
     // List of active camera slots (generated server-side)
     const activeCameras = {{ (cameras | selectattr('active') | map(attribute='slot') | list) | tojson }};
 
+    let snapshotErrorCount = 0;
+    const maxSnapshotErrors = 3;
+
     // Auto-refresh snapshots every 5 seconds for active cameras only
-    setInterval(() => {
+    const snapshotInterval = setInterval(() => {
         activeCameras.forEach(slot => {
             refreshSnapshot(slot);
         });
@@ -141,11 +144,44 @@
 
     function refreshSnapshot(slot) {
         const img = document.getElementById('snapshot-' + slot);
-        if (img) {
-            // Add timestamp to prevent caching
-            const timestamp = new Date().getTime();
-            img.src = '/lan/api/snapshot?t=' + timestamp;
-        }
+        if (!img) return;
+
+        // Preload the new image before swapping it in (prevents flickering)
+        const timestamp = new Date().getTime();
+        const newImg = new Image();
+
+        newImg.onload = () => {
+            // Once loaded, swap in the new image source
+            img.src = newImg.src;
+            // Reset error count on success
+            snapshotErrorCount = 0;
+        };
+
+        newImg.onerror = () => {
+            snapshotErrorCount++;
+            console.warn('Failed to load snapshot for slot', slot, '(error', snapshotErrorCount, 'of', maxSnapshotErrors, ')');
+
+            // If we get multiple consecutive errors, stop trying and show a message
+            if (snapshotErrorCount >= maxSnapshotErrors) {
+                console.error('Camera appears to be offline, stopping snapshot refresh');
+                clearInterval(snapshotInterval);
+
+                // Optionally show an overlay on the snapshot
+                const container = img.closest('.camera-snapshot');
+                if (container && !container.querySelector('.camera-offline-notice')) {
+                    const notice = document.createElement('div');
+                    notice.className = 'camera-offline-notice';
+                    notice.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: white; padding: 1rem; border-radius: 0.5rem; text-align: center;';
+                    notice.innerHTML = '<p><strong>⚠ Camera Offline</strong></p><p style="font-size: 0.9rem; margin-top: 0.5rem;">Refresh the page to reconnect</p>';
+                    container.style.position = 'relative';
+                    container.appendChild(notice);
+                }
+            }
+            // Keep the old image on error - don't update
+        };
+
+        // Start loading the new snapshot
+        newImg.src = '/lan/api/snapshot?t=' + timestamp;
     }
 
     async function switchCamera(slot) {

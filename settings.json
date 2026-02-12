@@ -22,5 +22,6 @@
     }
   ],
   "cloud_location": "https://cattern.com",
-  "this_rover_ip": "76.187.216.180"
+  "this_rover_ip": "76.187.216.180",
+  "lan_ip": "192.168.86.31"
 }

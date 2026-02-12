@@ -1,9 +1,10 @@
 """Flask application factory."""
 
+import ipaddress
 import logging
 import os
 
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, request, url_for
 from flask_socketio import SocketIO
 
 from .camera import FrameBuffer, OpenCVCamera
@@ -16,6 +17,53 @@ logger = logging.getLogger(__name__)
 
 socketio = SocketIO()
 video_namespace = VideoNamespace()
+
+
+def is_local_request() -> bool:
+    """Determine if the current request is from the local network.
+
+    Checks if request originates from localhost or private IP ranges (LAN).
+    Supports proxy headers (X-Forwarded-For, X-Real-IP).
+
+    Returns:
+        True if request is from local network (localhost or LAN), False otherwise.
+    """
+    # Get the remote address, checking proxy headers first
+    remote_addr = request.headers.get('X-Real-IP')
+    if not remote_addr:
+        forwarded_for = request.headers.get('X-Forwarded-For')
+        if forwarded_for:
+            # X-Forwarded-For can contain multiple IPs: "client, proxy1, proxy2"
+            # The first IP is the original client
+            remote_addr = forwarded_for.split(',')[0].strip()
+
+    if not remote_addr:
+        remote_addr = request.remote_addr
+
+    if not remote_addr:
+        # No remote address found, default to remote (secure)
+        return False
+
+    try:
+        ip = ipaddress.ip_address(remote_addr)
+
+        # Check if it's a loopback address (localhost)
+        if ip.is_loopback:
+            return True
+
+        # Check if it's a private address (LAN)
+        if ip.is_private:
+            return True
+
+        # Check if it's link-local (fe80::/10 for IPv6, 169.254.0.0/16 for IPv4)
+        if ip.is_link_local:
+            return True
+
+        return False
+
+    except ValueError:
+        # Invalid IP address format, default to remote (secure)
+        return False
 
 
 def create_app(config: Config = None) -> Flask:
@@ -87,8 +135,15 @@ def create_app(config: Config = None) -> Flask:
 
     @app.route("/")
     def root():
-        """Redirect root to WWW interface (secure by default)."""
-        return redirect(url_for("www.index"))
+        """Redirect root based on request origin.
+
+        - Local network requests (localhost/LAN) → /lan/ (MJPEG viewer)
+        - Remote requests (Internet) → /www/ (H.264 streaming, secure by default)
+        """
+        if is_local_request():
+            return redirect(url_for("mjpeg.index"))
+        else:
+            return redirect(url_for("www.index"))
 
     @app.context_processor
     def inject_settings():

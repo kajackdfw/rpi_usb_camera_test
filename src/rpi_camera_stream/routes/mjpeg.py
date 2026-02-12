@@ -158,8 +158,14 @@ def stream(slot):
 def video_feed():
     """MJPEG video stream endpoint."""
     camera = current_app.config.get("camera")
-    if camera is None or not camera.is_running:
-        return jsonify({"error": "Camera not available"}), 503
+
+    if camera is None:
+        logger.warning("Video feed requested but camera is None")
+        return jsonify({"error": "Camera not initialized"}), 503
+
+    if not camera.is_running:
+        logger.warning(f"Video feed requested but camera is not running (device: {camera.device})")
+        return jsonify({"error": "Camera not running", "device": camera.device}), 503
 
     frame_buffer = _get_frame_buffer()
     return Response(

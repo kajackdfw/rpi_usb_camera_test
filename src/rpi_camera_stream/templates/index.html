@@ -6,17 +6,29 @@
 <div class="content-container">
     <div class="hero-center">
         <hgroup>
-            <h1>Welcome to {{ rover_name }}</h1>
+            <h2>{% if settings.lan_ip %}LAN {{ settings.lan_ip }} - {% endif %}{{ rover_name }}</h2>
             <p>Raspberry Pi USB Camera Streaming Server</p>
         </hgroup>
 
-        <div class="button-group">
-            <a href="{{ url_for('mjpeg.streams') }}" role="button">View LAN Streams</a>
-            <a href="{{ url_for('www.index') }}" role="button" class="secondary">WWW Interface</a>
+        {% if settings.lan_ip %}
+        <div class="qr-code-section" style="margin: 1rem 0; text-align: center;">
+            <p><strong>Scan to connect from mobile:</strong></p>
+            <img src="{{ url_for('api.generate_qr') }}?ip={{ settings.lan_ip }}" alt="QR Code for LAN URL" style="max-width: 250px; margin: 1rem auto; display: block; border: 2px solid var(--pico-contrast); border-radius: var(--pico-border-radius);">
+            <p style="font-size: 0.9rem; color: var(--pico-muted-color);">
+                <code>http://{{ settings.lan_ip }}:{{ request.host.split(':')[-1] if ':' in request.host else '5000' }}/</code>
+            </p>
         </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script>
+    // Debug: Log whether lan_ip is available in settings
+    console.log('LAN IP available:', {{ 'true' if settings.lan_ip else 'false' }});
+    {% if settings.lan_ip %}
+    console.log('LAN IP value:', '{{ settings.lan_ip }}');
+    {% endif %}
+</script>
 {% endblock %}

@@ -315,7 +315,7 @@
     loadAvailableDevices();
 
     // Fetch active camera status
-    fetch('/api/status')
+    fetch('{{ url_for("mjpeg.status") }}')
         .then(response => response.json())
         .then(data => {
             const statusEl = document.getElementById('active-camera-status');

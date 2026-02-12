@@ -1,153 +1,148 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera {{ camera_id|default(0) }} - {{ rover_name }}</title>
+{% extends "base.html" %}
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+{% block title %}Camera {{ camera_id|default(0) }}{% endblock %}
 
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+{% block head %}
+<!-- Streams-specific CSS (includes main.css via @forward) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/streams.min.css') }}">
+{% endblock %}
 
-    <!-- Pico CSS - Conditional (supports light/dark themes) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/pico/css/pico.conditional.min.css') }}">
+{% block content %}
+<header class="page-header">
+    <h1>{{ rover_name }}</h1>
+    <p>Camera Slot {{ camera_id|default(0) }} - Live Stream {% if camera_type %}<small>({{ camera_type }})</small>{% endif %}</p>
+</header>
 
-    <!-- Custom SCSS compiled CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/streams.min.css') }}">
-
-    <!-- Dark mode initialization (before render to prevent flash) -->
-    <script>
-        // Initialize theme from localStorage or system preference
-        const savedTheme = localStorage.getItem('theme');
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', initialTheme);
-    </script>
-</head>
-<body>
-    <!-- Navbar -->
-    <nav>
-        <div class="container">
-            <ul>
-                <li><strong><a href="/lan/" class="contrast">{{ rover_name }}</a></strong></li>
-            </ul>
-            <ul>
-                <li><a href="/lan/">Home</a></li>
-                <li><a href="/lan/settings">Settings</a></li>
-                <li><a href="/lan/streams">LAN Streams</a></li>
-                <li>
-                    <button id="theme-toggle" class="contrast outline" aria-label="Toggle theme" data-tooltip="Toggle dark mode">
-                        <i id="theme-icon" data-lucide="moon" style="width: 1.25rem; height: 1.25rem;"></i>
-                    </button>
-                </li>
-            </ul>
+<article class="camera-card">
+    <div class="camera-card-header">
+        <h3>
+            <span>Slot {{ camera_id|default(0) }} Live View</span>
+            {% if camera_type %}
+            <span class="camera-type-badge">{{ camera_type }}</span>
+            {% endif %}
+        </h3>
+        <div class="camera-subtitle">
+            MJPEG Stream
         </div>
-    </nav>
+    </div>
 
-    <!-- Main Content -->
-    <main class="container">
-        <header class="page-header">
-            <h1>{{ rover_name }}</h1>
-            <p>Camera Slot {{ camera_id|default(0) }} - Live Stream {% if camera_type %}<small>({{ camera_type }})</small>{% endif %}</p>
-        </header>
+    <!-- Camera Live Stream -->
+    <div class="camera-snapshot" id="stream-container">
+        <div id="stream-loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; background: var(--pico-muted-border-color);">
+            <p>Loading camera stream...</p>
+            <p style="font-size: 0.9rem; color: var(--pico-muted-color);">Please wait</p>
+        </div>
+        <!-- No src attribute initially - prevents browser from fetching before JS is ready -->
+        <img id="video-stream" style="display: none; width: 100%;" alt="Camera {{ camera_id|default(0) }} Stream">
+        <div id="stream-error" style="display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; background: var(--pico-muted-border-color); color: var(--pico-del-color);">
+            <p><strong>⚠ Camera stream unavailable</strong></p>
+            <p style="font-size: 0.9rem;">Retrying...</p>
+        </div>
+    </div>
 
-        <article class="camera-card">
-            <div class="camera-card-header">
-                <h3>
-                    <span>Slot {{ camera_id|default(0) }} Live View</span>
-                    {% if camera_type %}
-                    <span class="camera-type-badge">{{ camera_type }}</span>
-                    {% endif %}
-                </h3>
-                <div class="camera-subtitle">
-                    MJPEG Stream
-                </div>
-            </div>
+    <!-- Status Badge and Controls -->
+    <div class="camera-actions">
+        <div id="stream-status" class="status-badge w-1-3" style="background: var(--pico-muted-border-color); color: var(--pico-muted-color);">
+            <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
+                <i data-lucide="loader" style="width: 1.125rem; height: 1.125rem;"></i>
+                <span>Connecting...</span>
+            </span>
+        </div>
 
-            <!-- Camera Live Stream -->
-            <div class="camera-snapshot">
-                <img src="/lan/video_feed" alt="Camera {{ camera_id|default(0) }} Stream">
-            </div>
-
-            <!-- Status Badge and Controls -->
-            <div class="camera-actions">
-                <div class="status-badge active w-1-3">
+        <div class="btn-wrapper w-2-3">
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="secondary" onclick="window.location.reload()" style="flex: 1;">
                     <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
-                        <i data-lucide="video" style="width: 1.125rem; height: 1.125rem;"></i>
-                        <span>Streaming</span>
+                        <i data-lucide="refresh-cw" style="width: 1rem; height: 1rem;"></i>
+                        <span>Refresh</span>
                     </span>
-                </div>
-
-                <div class="btn-wrapper w-2-3">
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="secondary" onclick="window.location.reload()" style="flex: 1;">
-                            <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
-                                <i data-lucide="refresh-cw" style="width: 1rem; height: 1rem;"></i>
-                                <span>Refresh</span>
-                            </span>
-                        </button>
-                        <a href="/lan/api/snapshot" role="button" style="flex: 1; margin: 0;">
-                            <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
-                                <i data-lucide="camera" style="width: 1rem; height: 1rem;"></i>
-                                <span>Snapshot</span>
-                            </span>
-                        </a>
-                    </div>
-                </div>
+                </button>
+                <a href="/lan/api/snapshot" role="button" style="flex: 1; margin: 0;">
+                    <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
+                        <i data-lucide="camera" style="width: 1rem; height: 1rem;"></i>
+                        <span>Snapshot</span>
+                    </span>
+                </a>
             </div>
-
-            <!-- Camera Info -->
-            <div class="camera-info">
-                <div><strong>Stream Type:</strong> MJPEG</div>
-                <div><strong>Refresh Rate:</strong> Real-time</div>
-                <div><strong>Status:</strong> Active</div>
-            </div>
-        </article>
-
-        <!-- Back Button -->
-        <div style="text-align: center; margin-top: 2rem;">
-            <a href="/lan/streams" role="button" class="secondary">
-                <span style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
-                    <i data-lucide="arrow-left" style="width: 1.125rem; height: 1.125rem;"></i>
-                    <span>Back to All Streams</span>
-                </span>
-            </a>
         </div>
-    </main>
+    </div>
 
-    <!-- Initialize Lucide Icons -->
-    <script>
-        lucide.createIcons();
-    </script>
+    <!-- Camera Info -->
+    <div class="camera-info">
+        <div><strong>Stream Type:</strong> MJPEG</div>
+        <div><strong>Refresh Rate:</strong> Real-time</div>
+        <div><strong>Status:</strong> Active</div>
+    </div>
+</article>
 
-    <!-- Theme Toggle Script -->
-    <script>
-        const themeToggle = document.getElementById('theme-toggle');
+<!-- Back Button -->
+<div style="text-align: center; margin-top: 2rem;">
+    <a href="/lan/streams" role="button" class="secondary">
+        <span style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+            <i data-lucide="arrow-left" style="width: 1.125rem; height: 1.125rem;"></i>
+            <span>Back to All Streams</span>
+        </span>
+    </a>
+</div>
+{% endblock %}
 
-        function updateThemeIcon(theme) {
-            const iconName = theme === 'dark' ? 'sun' : 'moon';
-            const container = document.getElementById('theme-icon');
+{% block scripts %}
+<script>
+    const videoStream = document.getElementById('video-stream');
+    const loadingDiv = document.getElementById('stream-loading');
+    const errorDiv = document.getElementById('stream-error');
+    const statusBadge = document.getElementById('stream-status');
 
-            // Replace with new icon HTML
-            container.outerHTML = `<i id="theme-icon" data-lucide="${iconName}" style="width: 1.25rem; height: 1.25rem;"></i>`;
-
-            // Reinitialize only the new icon
-            lucide.createIcons();
+    function updateStatus(state, icon, text, color) {
+        if (!statusBadge) {
+            console.warn('Status badge not found');
+            return;
         }
 
-        // Initialize icon
-        updateThemeIcon(document.documentElement.getAttribute('data-theme'));
+        const iconEl = statusBadge.querySelector('i');
+        const textEl = statusBadge.querySelector('span span:last-child');
 
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        if (iconEl) {
+            iconEl.setAttribute('data-lucide', icon);
+        } else {
+            console.warn('Icon element not found');
+        }
 
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeIcon(newTheme);
-        });
-    </script>
-</body>
-</html>
+        if (textEl) {
+            textEl.textContent = text;
+        } else {
+            console.warn('Text element not found');
+        }
+
+        statusBadge.className = 'status-badge w-1-3 ' + state;
+
+        if (color) {
+            statusBadge.style.background = color.bg;
+            statusBadge.style.color = color.text;
+        }
+
+        // Refresh Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+
+    function loadStream() {
+        console.log('Loading video stream...');
+        updateStatus('active', 'video', 'Streaming', { bg: '#d4edda', text: '#155724' });
+
+        // Add timestamp to prevent caching
+        const timestamp = new Date().getTime();
+        videoStream.src = '/lan/video_feed?t=' + timestamp;
+
+        // Show stream
+        if (loadingDiv) loadingDiv.style.display = 'none';
+        if (errorDiv) errorDiv.style.display = 'none';
+        if (videoStream) videoStream.style.display = 'block';
+        console.log('Video stream loaded');
+    }
+
+    // Simple approach: wait 500ms for camera to be ready, then load
+    setTimeout(loadStream, 500);
+</script>
+{% endblock %}

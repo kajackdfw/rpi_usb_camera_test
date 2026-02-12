@@ -50,6 +50,40 @@ def fetch_rover_ip(cloud_location: str, timeout: int = 10) -> Optional[str]:
         return None
 
 
+def get_local_ip() -> Optional[str]:
+    """
+    Get the local network IP address (LAN IP).
+
+    Uses socket to connect to an external address to determine which
+    local interface would be used, without actually sending data.
+
+    Returns:
+        Local IP address string (e.g., "192.168.1.100"), or None if detection fails
+    """
+    import socket
+
+    try:
+        # Create a socket and connect to an external address
+        # This doesn't actually send data, just determines routing
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(0)
+
+        # Connect to Google DNS (8.8.8.8) to determine local interface
+        # Port 80 is arbitrary - no actual connection is made
+        s.connect(('8.8.8.8', 80))
+
+        # Get the socket's own address
+        local_ip = s.getsockname()[0]
+        s.close()
+
+        logger.info(f"Detected local IP: {local_ip}")
+        return local_ip
+
+    except Exception as e:
+        logger.warning(f"Failed to detect local IP: {e}")
+        return None
+
+
 def run_startup_tasks(settings) -> None:
     """
     Run all startup tasks (IP detection, etc.).
@@ -58,6 +92,14 @@ def run_startup_tasks(settings) -> None:
         settings: Settings instance
     """
     logger.info("Running startup tasks...")
+
+    # Detect local LAN IP
+    lan_ip = get_local_ip()
+    if lan_ip:
+        settings.set("lan_ip", lan_ip)
+        logger.info(f"Local LAN IP stored in settings: {lan_ip}")
+    else:
+        logger.warning("Failed to detect local LAN IP")
 
     # Fetch rover IP from cloud
     cloud_location = settings.get("cloud_location")

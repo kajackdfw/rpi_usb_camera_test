@@ -51,19 +51,28 @@
     <!-- Navbar -->
     <nav>
         <div class="container">
-            <ul>
-                <li><strong><a href="{{ url_for('mjpeg.index') }}" id="nav-title" class="contrast">{{ rover_name }}</a></strong></li>
-            </ul>
-            <ul>
-                <li><a href="{{ url_for('mjpeg.index') }}">Home</a></li>
-                <li><a href="{{ url_for('settings.index') }}">Settings</a></li>
-                <li><a href="{{ url_for('mjpeg.streams') }}">LAN Streams</a></li>
-                <li>
-                    <button id="theme-toggle" class="contrast outline" aria-label="Toggle theme" data-tooltip="Toggle dark mode">
-                        <i id="theme-icon" data-lucide="moon" style="width: 1.25rem; height: 1.25rem;"></i>
-                    </button>
-                </li>
-            </ul>
+            <!-- Line 1: Rover name (left) and theme toggle (right) on small screens -->
+            <div class="nav-header">
+                <ul>
+                    <li><strong><a href="{{ url_for('mjpeg.index') }}" id="nav-title" class="contrast">{{ rover_name }}</a></strong></li>
+                </ul>
+                <ul>
+                    <li>
+                        <button id="theme-toggle" class="contrast outline" aria-label="Toggle theme" data-tooltip="Toggle dark mode">
+                            <i id="theme-icon" data-lucide="moon" style="width: 1.25rem; height: 1.25rem;"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Line 2: Page links evenly spaced on small screens -->
+            <div class="nav-links">
+                <ul>
+                    <li><a href="{{ url_for('mjpeg.index') }}">Home</a></li>
+                    <li><a href="{{ url_for('settings.index') }}">Settings</a></li>
+                    <li><a href="{{ url_for('mjpeg.streams') }}">CAMs</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
 

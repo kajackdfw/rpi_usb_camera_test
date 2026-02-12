@@ -230,3 +230,50 @@ def refresh_ip():
         return jsonify({"success": True, "ip": rover_ip})
     else:
         return jsonify({"error": "Failed to fetch IP from cloud"}), 500
+
+
+@api_bp.route("/qr", methods=["GET"])
+def generate_qr():
+    """Generate QR code for the LAN URL."""
+    import io
+    import qrcode
+
+    settings = current_app.config.get("settings")
+    if settings is None:
+        return jsonify({"error": "Settings not initialized"}), 500
+
+    # Get LAN IP from settings
+    lan_ip = settings.get("lan_ip")
+    if not lan_ip:
+        return jsonify({"error": "LAN IP not detected"}), 500
+
+    # Get port from request (assumes server is running on the same port as this request)
+    port = request.host.split(":")[-1] if ":" in request.host else "5000"
+
+    # Build full URL
+    url = f"http://{lan_ip}:{port}/"
+
+    # Generate QR code
+    qr = qrcode.QRCode(
+        version=1,  # Smallest version that fits the data
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(url)
+    qr.make(fit=True)
+
+    # Create image
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    # Convert to bytes
+    img_io = io.BytesIO()
+    img.save(img_io, "PNG")
+    img_io.seek(0)
+
+    # Create response with cache-control headers to prevent caching
+    response = Response(img_io.read(), mimetype="image/png")
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response

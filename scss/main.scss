@@ -74,6 +74,23 @@ nav {
         gap: 1rem;
     }
 
+    // Navbar sections for responsive layout
+    .nav-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex: 1 1 100%;
+        min-width: 100%;
+    }
+
+    .nav-links {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 1 1 100%;
+        gap: 0.5rem;
+    }
+
     ul {
         display: flex;
         align-items: center;
@@ -128,6 +145,47 @@ nav {
         &:hover {
             background: pico-colors.$zinc-500; // Medium gray background
             color: white; // White icon
+        }
+    }
+
+    // Responsive: MD and up (tablets and desktop) - single line layout
+    @media (min-width: 768px) {
+        .nav-header {
+            flex: 0 1 auto;
+            min-width: auto;
+        }
+
+        .nav-links {
+            flex: 0 1 auto;
+            justify-content: flex-end;
+        }
+    }
+
+    // Responsive: SM and down (mobile) - two line layout
+    @media (max-width: 767px) {
+        .container {
+            gap: 0.5rem;
+        }
+
+        .nav-header {
+            // Line 1: Rover name left, theme toggle right
+            order: 1;
+        }
+
+        .nav-links {
+            // Line 2: Page links evenly spaced
+            order: 2;
+            justify-content: space-evenly;
+            width: 100%;
+        }
+
+        ul li a {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.95rem;
+        }
+
+        ul li strong a {
+            font-size: 1.1rem;
         }
     }
 }
