@@ -87,3 +87,53 @@ $success (default: $success-400)
 $primary (azure-700)
 $primary-hover (azure-600)
 ```
+
+## Pico CSS Style Guide
+
+### Form Styling
+
+**Input Field Sizing:**
+- Add `class="pico"` to `<form>` elements to get normal-sized input fields with generous padding
+- Without this class, inputs will appear smaller than expected
+
+```html
+<!-- ✅ Correct: Proper input sizing -->
+<form class="pico">
+  <input type="text" placeholder="Normal size input">
+  <button type="submit">Submit</button>
+</form>
+
+<!-- ❌ Incorrect: Smaller inputs -->
+<form>
+  <input type="text" placeholder="Small input">
+  <button type="submit">Submit</button>
+</form>
+```
+
+### HTML Formatting
+
+**Closing Div Comments:**
+- Label closing `</div>` tags with comments to identify which container they close
+- This improves readability in complex nested structures
+
+```html
+<!-- ✅ Correct: Labeled closing tags -->
+<div class="camera-slots">
+  <div class="left-column">
+    <!-- content -->
+  </div> <!-- end of left-column -->
+  <div class="right-column">
+    <!-- content -->
+  </div> <!-- end of right-column -->
+</div> <!-- end of camera-slots -->
+
+<!-- ❌ Incorrect: Unlabeled closing tags -->
+<div class="camera-slots">
+  <div class="left-column">
+    <!-- content -->
+  </div>
+  <div class="right-column">
+    <!-- content -->
+  </div>
+</div>
+```

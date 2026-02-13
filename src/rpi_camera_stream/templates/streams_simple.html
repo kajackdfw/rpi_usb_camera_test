@@ -8,12 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<header class="page-header">
-    <h1>{{ rover_name }}</h1>
-    <p>Camera Slot {{ camera_id|default(0) }} - Live Stream {% if camera_type %}<small>({{ camera_type }})</small>{% endif %}</p>
-</header>
-
-<article class="camera-card">
+<article class="stream-card">
     <div class="camera-card-header">
         <h3>
             <span>Slot {{ camera_id|default(0) }} Live View</span>
@@ -33,7 +28,7 @@
             <p style="font-size: 0.9rem; color: var(--pico-muted-color);">Please wait</p>
         </div>
         <!-- No src attribute initially - prevents browser from fetching before JS is ready -->
-        <img id="video-stream" style="display: none; width: 100%;" alt="Camera {{ camera_id|default(0) }} Stream">
+        <img id="video-stream" style="display: none; max-width: 100%; height: auto;" alt="Camera {{ camera_id|default(0) }} Stream">
         <div id="stream-error" style="display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; background: var(--pico-muted-border-color); color: var(--pico-del-color);">
             <p><strong>⚠ Camera stream unavailable</strong></p>
             <p style="font-size: 0.9rem;">Retrying...</p>

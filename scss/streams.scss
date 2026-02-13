@@ -137,7 +137,8 @@
 
     img {
         display: block;
-        width: 100%;
+        max-width: 100%;
+        width: auto;
         height: auto;
         transition: opacity 0.3s ease;
     }

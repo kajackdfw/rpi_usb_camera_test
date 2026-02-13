@@ -307,3 +307,86 @@ section {
 .hidden {
     display: none !important;
 }
+
+// Two-Column Layout (for camera slots)
+#camera-slots {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.left-column,
+.right-column {
+    flex: 1;
+    padding: 0.75rem;
+}
+
+// Stream Card (based on camera-card but with square corners on mobile)
+.stream-card {
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0; // Square corners on mobile
+    padding: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1em;
+    width: fit-content;
+    max-width: 100%;
+    background: pico-colors.$zinc-200;
+    border: 1px solid pico-colors.$orange-350;
+
+    // Rounded corners on MD and larger screens
+    @media (min-width: 768px) {
+        border-radius: 1em;
+    }
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        border-color: pico-colors.$orange-450;
+
+        [data-theme="dark"] & {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+    }
+}
+
+// Dark mode stream card styling
+[data-theme="dark"] {
+    .stream-card {
+        background: pico-colors.$zinc-800;
+        border: 1px solid pico-colors.$zinc-700;
+
+        &:hover {
+            border-color: pico-colors.$zinc-600;
+        }
+    }
+}
+
+// Settings Card
+.settings-card {
+    padding-bottom: 0;
+
+    > *:last-child {
+        margin-bottom: 0;
+    }
+
+    fieldset {
+        border: 1px solid pico-colors.$zinc-400; // Light gray for light mode
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+
+        legend {
+            color: pico-colors.$orange-500; // Brand color for pop
+        }
+
+        [data-theme="dark"] & {
+            border-color: pico-colors.$zinc-950; // Black for dark mode
+
+            legend {
+                color: pico-colors.$orange-450; // Adjust brand color for dark mode
+            }
+        }
+    }
+}

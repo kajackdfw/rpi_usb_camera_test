@@ -14,7 +14,7 @@
     <!-- Rover Name Card -->
     <section class="settings-card">
         <h2>This Rover</h2>
-        <form class="form-inline">
+        <form class="pico form-inline">
             <label for="rover-name">Rover Name</label>
             <input type="text"
                    id="rover-name"
@@ -23,12 +23,22 @@
             <button type="button" id="save-rover-name">Save</button>
         </form>
         <p id="rover-name-status" class="status-message success hidden">Saved!</p>
+
+        <form class="pico">
+            <label>
+                LAN IP
+                <input type="text"
+                       id="lan-ip"
+                       name="lan-ip"
+                       readonly>
+            </label>
+        </form>
     </section>
 
     <!-- Cloud Configuration Card -->
     <section class="settings-card">
         <h2>Cloud Configuration</h2>
-        <form class="form-grid">
+        <form class="pico form-grid">
             <label>
                 Cloud Location
                 <input type="text"
@@ -60,9 +70,11 @@
         <h2>Camera Configuration</h2>
         <p><small>Configure up to 3 camera slots. Assign video devices and set camera types.</small></p>
 
-        <!-- Camera Slots Configuration -->
-        <div id="camera-slots">
-            <!-- Camera Slot 1 -->
+        <form class="pico">
+            <!-- Camera Slots Configuration -->
+            <div id="camera-slots">
+                <div class="left-column">
+           <!-- Camera Slot 1 -->
             <fieldset class="camera-slot-config">
                 <legend>Camera Slot 1</legend>
                 <label>
@@ -71,7 +83,7 @@
                         <option value="">Not Assigned</option>
                     </select>
                 </label>
-                <div class="grid">
+                <div>
                     <label>
                         Camera Type
                         <select id="camera1-type" name="camera1-type">
@@ -88,32 +100,6 @@
                 </div>
             </fieldset>
 
-            <!-- Camera Slot 2 -->
-            <fieldset class="camera-slot-config">
-                <legend>Camera Slot 2</legend>
-                <label>
-                    Video Device
-                    <select id="camera2-device" name="camera2-device">
-                        <option value="">Not Assigned</option>
-                    </select>
-                </label>
-                <div class="grid">
-                    <label>
-                        Camera Type
-                        <select id="camera2-type" name="camera2-type">
-                            <option value="W">Wide Angle (W)</option>
-                            <option value="N" selected>Normal (N)</option>
-                            <option value="IR">Infrared (IR)</option>
-                            <option value="T">Telephoto (T)</option>
-                        </select>
-                    </label>
-                    <label>
-                        Enabled
-                        <input type="checkbox" id="camera2-enabled" name="camera2-enabled" role="switch">
-                    </label>
-                </div>
-            </fieldset>
-
             <!-- Camera Slot 3 -->
             <fieldset class="camera-slot-config">
                 <legend>Camera Slot 3</legend>
@@ -123,7 +109,7 @@
                         <option value="">Not Assigned</option>
                     </select>
                 </label>
-                <div class="grid">
+                <div>
                     <label>
                         Camera Type
                         <select id="camera3-type" name="camera3-type">
@@ -139,14 +125,50 @@
                     </label>
                 </div>
             </fieldset>
+
+                </div> <!-- end of right column -->
+                <div class="right-column">
+            <!-- Camera Slot 2 -->
+            <fieldset class="camera-slot-config">
+                <legend>Camera Slot 2</legend>
+                <label>
+                    Video Device
+                    <select id="camera2-device" name="camera2-device">
+                        <option value="">Not Assigned</option>
+                    </select>
+                </label>
+                <div>
+                    <label>
+                        Camera Type
+                        <select id="camera2-type" name="camera2-type">
+                            <option value="W">Wide Angle (W)</option>
+                            <option value="N" selected>Normal (N)</option>
+                            <option value="IR">Infrared (IR)</option>
+                            <option value="T">Telephoto (T)</option>
+                        </select>
+                    </label>
+                    <label>
+                        Enabled
+                        <input type="checkbox" id="camera2-enabled" name="camera2-enabled" role="switch">
+                    </label>
+                </div>
+            </fieldset>
+                </div>
+
+ 
+
+
+
+
         </div>
 
-        <!-- Buttons -->
-        <div class="button-group">
-            <button type="button" id="scan-devices-btn" class="secondary">🔍 Scan for Cameras</button>
-            <button type="button" id="save-cameras-btn">💾 Save Camera Configuration</button>
-        </div>
-        <p id="camera-config-status" class="status-message success hidden">Saved!</p>
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="button" id="scan-devices-btn" class="secondary">🔍 Scan for Cameras</button>
+                <button type="button" id="save-cameras-btn">💾 Save Camera Configuration</button>
+            </div>
+            <p id="camera-config-status" class="status-message success hidden">Saved!</p>
+        </form>
     </section>
 
     <!-- Active Camera Status Card -->
@@ -173,6 +195,9 @@
     // Load rover name from server-rendered template variable
     const roverNameInput = document.getElementById('rover-name');
     roverNameInput.value = '{{ rover_name }}';
+
+    // Load LAN IP
+    document.getElementById('lan-ip').value = roverSettings.lan_ip || 'Not detected';
 
     // Load cloud configuration
     function loadCloudSettings() {
