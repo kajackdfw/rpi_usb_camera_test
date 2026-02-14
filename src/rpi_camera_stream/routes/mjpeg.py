@@ -151,7 +151,11 @@ def stream(slot):
     if slot != active_slot:
         return jsonify({"error": f"Camera {slot} is not active. Active camera: {active_slot}"}), 400
 
-    return render_template("streams_simple.html", camera_id=slot, camera_type=camera_config["type"])
+    # Get camera properties for resolution info
+    camera = current_app.config.get("camera")
+    properties = camera.get_properties() if camera and camera.is_running else {}
+
+    return render_template("streams_simple.html", camera_id=slot, camera_type=camera_config["type"], properties=properties)
 
 
 @mjpeg_bp.route("/video_feed")

@@ -52,12 +52,12 @@
                         <span>Refresh</span>
                     </span>
                 </button>
-                <a href="/lan/api/snapshot" role="button" style="flex: 1; margin: 0;">
+                <button class="outline" onclick="redirect('/lan/api/snapshot')" style="flex: 1; margin: 0;">
                     <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
                         <i data-lucide="camera" style="width: 1rem; height: 1rem;"></i>
                         <span>Snapshot</span>
                     </span>
-                </a>
+                </button>
             </div>
         </div>
     </div>
@@ -66,6 +66,7 @@
     <div class="camera-info">
         <div><strong>Stream Type:</strong> MJPEG</div>
         <div><strong>Refresh Rate:</strong> Real-time</div>
+        <div><strong>Resolution:</strong> {% if properties.width and properties.height %}{{ properties.width }}x{{ properties.height }}{% else %}N/A{% endif %}</div>
         <div><strong>Status:</strong> Active</div>
     </div>
 </article>
@@ -83,6 +84,11 @@
 
 {% block scripts %}
 <script>
+    // Redirect helper function
+    function redirect(url) {
+        window.location.href = url;
+    }
+
     const videoStream = document.getElementById('video-stream');
     const loadingDiv = document.getElementById('stream-loading');
     const errorDiv = document.getElementById('stream-error');

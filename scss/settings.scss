@@ -101,3 +101,35 @@
 
 // Removed aggressive input/button overrides - let Pico CSS classless handle default styling
 // Pico provides consistent, accessible sizing and spacing out of the box
+
+// Active Camera Status (inline dt/dd layout)
+#active-camera-status {
+    dl {
+        margin-bottom: 0;
+
+        dt, dd {
+            display: inline;
+            margin: 0;
+        }
+
+        dt {
+            font-weight: 600;
+            margin-right: 0.375rem;
+
+            &::after {
+                content: '';
+            }
+        }
+
+        dd {
+            &::after {
+                content: '\A';
+                white-space: pre;
+            }
+
+            &:last-child::after {
+                content: '';
+            }
+        }
+    }
+}

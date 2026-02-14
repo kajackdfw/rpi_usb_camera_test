@@ -77,10 +77,17 @@ nav {
     // Navbar sections for responsive layout
     .nav-header {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
         flex: 1 1 100%;
         min-width: 100%;
+    }
+
+    .nav-theme {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        flex: 0 0 auto;
     }
 
     .nav-links {
@@ -115,6 +122,11 @@ nav {
                 &:hover {
                     background-color: pico-colors.$zinc-100;
                     color: pico-colors.$zinc-900;
+                }
+
+                &.active {
+                    color: pico-colors.$orange-500;
+                    font-weight: 600;
                 }
             }
 
@@ -153,11 +165,19 @@ nav {
         .nav-header {
             flex: 0 1 auto;
             min-width: auto;
+            order: 1;
+        }
+
+        .nav-theme {
+            order: 2;
+            margin-left: auto; // Push to the right
+            margin-right: 0.5rem; // Small gap before nav-links
         }
 
         .nav-links {
             flex: 0 1 auto;
             justify-content: flex-end;
+            order: 3;
         }
     }
 
@@ -168,13 +188,21 @@ nav {
         }
 
         .nav-header {
-            // Line 1: Rover name left, theme toggle right
+            // Line 1: Rover name left
             order: 1;
+            flex: 1 1 auto;
+            min-width: auto;
+        }
+
+        .nav-theme {
+            // Line 1: Theme toggle right
+            order: 2;
+            flex: 0 0 auto;
         }
 
         .nav-links {
             // Line 2: Page links evenly spaced
-            order: 2;
+            order: 3;
             justify-content: space-evenly;
             width: 100%;
         }
@@ -202,6 +230,11 @@ nav {
                 &:hover {
                     background-color: pico-colors.$zinc-700;
                     color: pico-colors.$zinc-100;
+                }
+
+                &.active {
+                    color: pico-colors.$orange-450;
+                    font-weight: 600;
                 }
             }
 

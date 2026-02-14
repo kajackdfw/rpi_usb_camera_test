@@ -55,12 +55,22 @@
                            id="rover-ip"
                            name="rover-ip"
                            readonly>
-                    <button type="button" id="refresh-ip-btn" class="secondary">🔄 Refresh</button>
+                    <button type="button" id="refresh-ip-btn" class="secondary">
+                        <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
+                            <i data-lucide="refresh-cw" style="width: 1rem; height: 1rem;"></i>
+                            <span>Refresh</span>
+                        </span>
+                    </button>
                 </div>
                 <small>Automatically detected on startup. Click Refresh to update.</small>
             </label>
 
-            <button type="button" id="save-cloud-config-btn">💾 Save Cloud Configuration</button>
+            <button type="button" id="save-cloud-config-btn">
+                <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
+                    <i data-lucide="save" style="width: 1rem; height: 1rem;"></i>
+                    <span>Save Cloud Configuration</span>
+                </span>
+            </button>
             <p id="cloud-config-status" class="status-message success hidden">Saved!</p>
         </form>
     </section>
@@ -164,8 +174,18 @@
 
             <!-- Buttons -->
             <div class="button-group">
-                <button type="button" id="scan-devices-btn" class="secondary">🔍 Scan for Cameras</button>
-                <button type="button" id="save-cameras-btn">💾 Save Camera Configuration</button>
+                <button type="button" id="scan-devices-btn" class="secondary">
+                    <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
+                        <i data-lucide="search" style="width: 1rem; height: 1rem;"></i>
+                        <span>Scan for Cameras</span>
+                    </span>
+                </button>
+                <button type="button" id="save-cameras-btn">
+                    <span style="display: flex; align-items: center; gap: 0.375rem; justify-content: center;">
+                        <i data-lucide="save" style="width: 1rem; height: 1rem;"></i>
+                        <span>Save Camera Configuration</span>
+                    </span>
+                </button>
             </div>
             <p id="camera-config-status" class="status-message success hidden">Saved!</p>
         </form>
@@ -356,29 +376,45 @@
                 };
 
                 statusEl.innerHTML = `
-                    <dl>
-                        <dt>Active Camera:</dt>
-                        <dd><mark>Slot ${activeSlot}</mark> <small>(${typeNames[cameraConfig?.type] || 'Normal'})</small></dd>
-                        <dt>Device:</dt>
-                        <dd>${cameraConfig?.device || 'Unknown'}</dd>
-                        <dt>Status:</dt>
-                        <dd><ins>Running</ins></dd>
-                        <dt>Resolution:</dt>
-                        <dd>${data.properties?.width || 'N/A'} x ${data.properties?.height || 'N/A'}</dd>
-                        <dt>FPS:</dt>
-                        <dd>${data.properties?.fps?.toFixed(1) || 'N/A'}</dd>
-                        <dt>Frames captured:</dt>
-                        <dd>${data.frame_count || 0}</dd>
-                    </dl>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <div class="left-column">
+                            <dl>
+                                <dt>Active Camera:</dt>
+                                <dd><mark>Slot ${activeSlot}</mark> <small>(${typeNames[cameraConfig?.type] || 'Normal'})</small></dd>
+                                <dt>Device:</dt>
+                                <dd>${cameraConfig?.device || 'Unknown'}</dd>
+                                <dt>Status:</dt>
+                                <dd><ins>Running</ins></dd>
+                            </dl>
+                        </div>
+                        <div class="right-column">
+                            <dl>
+                                <dt>Resolution:</dt>
+                                <dd>${data.properties?.width || 'N/A'} x ${data.properties?.height || 'N/A'}</dd>
+                                <dt>FPS:</dt>
+                                <dd>${data.properties?.fps?.toFixed(1) || 'N/A'}</dd>
+                                <dt>Frames captured:</dt>
+                                <dd>${data.frame_count || 0}</dd>
+                            </dl>
+                        </div>
+                    </div>
                 `;
             } else if (activeSlot) {
                 statusEl.innerHTML = `
-                    <dl>
-                        <dt>Active Camera:</dt>
-                        <dd><mark>Slot ${activeSlot}</mark></dd>
-                        <dt>Status:</dt>
-                        <dd><del>${data.status}</del></dd>
-                    </dl>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <div class="left-column">
+                            <dl>
+                                <dt>Active Camera:</dt>
+                                <dd><mark>Slot ${activeSlot}</mark></dd>
+                            </dl>
+                        </div>
+                        <div class="right-column">
+                            <dl>
+                                <dt>Status:</dt>
+                                <dd><del>${data.status}</del></dd>
+                            </dl>
+                        </div>
+                    </div>
                 `;
             } else {
                 statusEl.innerHTML = `
@@ -412,7 +448,7 @@
     document.getElementById('refresh-ip-btn').addEventListener('click', async () => {
         const button = document.getElementById('refresh-ip-btn');
         const originalText = button.textContent;
-        button.textContent = '⏳ Refreshing...';
+        button.textContent = 'Refreshing...';
         button.disabled = true;
 
         try {

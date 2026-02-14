@@ -51,11 +51,15 @@
     <!-- Navbar -->
     <nav>
         <div class="container">
-            <!-- Line 1: Rover name (left) and theme toggle (right) on small screens -->
+            <!-- Rover name (left on all screens) -->
             <div class="nav-header">
                 <ul>
                     <li><strong><a href="{{ url_for('mjpeg.index') }}" id="nav-title" class="contrast">{{ rover_name }}</a></strong></li>
                 </ul>
+            </div>
+
+            <!-- Theme toggle (right on mobile, before links on MD+) -->
+            <div class="nav-theme">
                 <ul>
                     <li>
                         <button id="theme-toggle" class="contrast outline" aria-label="Toggle theme" data-tooltip="Toggle dark mode">
@@ -65,12 +69,12 @@
                 </ul>
             </div>
 
-            <!-- Line 2: Page links evenly spaced on small screens -->
+            <!-- Page links (bottom on mobile, right on MD+) -->
             <div class="nav-links">
                 <ul>
-                    <li><a href="{{ url_for('mjpeg.index') }}">Home</a></li>
-                    <li><a href="{{ url_for('settings.index') }}">Settings</a></li>
-                    <li><a href="{{ url_for('mjpeg.streams') }}">CAMs</a></li>
+                    <li><a href="{{ url_for('mjpeg.index') }}" class="{% if request.endpoint == 'mjpeg.index' %}active{% endif %}">Home</a></li>
+                    <li><a href="{{ url_for('settings.index') }}" class="{% if request.endpoint == 'settings.index' %}active{% endif %}">Settings</a></li>
+                    <li><a href="{{ url_for('mjpeg.streams') }}" class="{% if request.endpoint == 'mjpeg.streams' or request.endpoint == 'mjpeg.stream' %}active{% endif %}">CAMs</a></li>
                 </ul>
             </div>
         </div>
