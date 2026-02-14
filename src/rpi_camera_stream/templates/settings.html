@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "partials/camera_slot_macro.html" import camera_slot %}
 
 {% block title %}Settings{% endblock %}
 
@@ -125,86 +126,13 @@
             <!-- Camera Slots Configuration -->
             <div id="camera-slots">
                 <div class="left-column">
-           <!-- Camera Slot 1 -->
-            <fieldset class="camera-slot-config">
-                <legend>Camera Slot 1</legend>
-                <label>
-                    Video Device
-                    <select id="camera1-device" name="camera1-device">
-                        <option value="">Not Assigned</option>
-                    </select>
-                </label>
-                <div>
-                    <label>
-                        Camera Type
-                        <select id="camera1-type" name="camera1-type">
-                            <option value="W">Wide Angle (W)</option>
-                            <option value="N" selected>Normal (N)</option>
-                            <option value="IR">Infrared (IR)</option>
-                            <option value="T">Telephoto (T)</option>
-                        </select>
-                    </label>
-                    <label>
-                        Enabled
-                        <input type="checkbox" id="camera1-enabled" name="camera1-enabled" role="switch">
-                    </label>
+                    {{ camera_slot(1) }}
+                    {{ camera_slot(3) }}
                 </div>
-            </fieldset>
-
-            <!-- Camera Slot 3 -->
-            <fieldset class="camera-slot-config">
-                <legend>Camera Slot 3</legend>
-                <label>
-                    Video Device
-                    <select id="camera3-device" name="camera3-device">
-                        <option value="">Not Assigned</option>
-                    </select>
-                </label>
-                <div>
-                    <label>
-                        Camera Type
-                        <select id="camera3-type" name="camera3-type">
-                            <option value="W">Wide Angle (W)</option>
-                            <option value="N" selected>Normal (N)</option>
-                            <option value="IR">Infrared (IR)</option>
-                            <option value="T">Telephoto (T)</option>
-                        </select>
-                    </label>
-                    <label>
-                        Enabled
-                        <input type="checkbox" id="camera3-enabled" name="camera3-enabled" role="switch">
-                    </label>
-                </div>
-            </fieldset>
-
-                </div> <!-- end of right column -->
                 <div class="right-column">
-            <!-- Camera Slot 2 -->
-            <fieldset class="camera-slot-config">
-                <legend>Camera Slot 2</legend>
-                <label>
-                    Video Device
-                    <select id="camera2-device" name="camera2-device">
-                        <option value="">Not Assigned</option>
-                    </select>
-                </label>
-                <div>
-                    <label>
-                        Camera Type
-                        <select id="camera2-type" name="camera2-type">
-                            <option value="W">Wide Angle (W)</option>
-                            <option value="N" selected>Normal (N)</option>
-                            <option value="IR">Infrared (IR)</option>
-                            <option value="T">Telephoto (T)</option>
-                        </select>
-                    </label>
-                    <label>
-                        Enabled
-                        <input type="checkbox" id="camera2-enabled" name="camera2-enabled" role="switch">
-                    </label>
+                    {{ camera_slot(2) }}
                 </div>
-            </fieldset>
-                </div>
+            </div>
 
  
 

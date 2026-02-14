@@ -1,0 +1,27 @@
+{# Macro for rendering a camera slot configuration fieldset #}
+{% macro camera_slot(slot_num) %}
+<fieldset class="camera-slot-config">
+    <legend>Camera Slot {{ slot_num }}</legend>
+    <label>
+        Video Device
+        <select id="camera{{ slot_num }}-device" name="camera{{ slot_num }}-device">
+            <option value="">Not Assigned</option>
+        </select>
+    </label>
+    <div>
+        <label>
+            Camera Type
+            <select id="camera{{ slot_num }}-type" name="camera{{ slot_num }}-type">
+                <option value="W">Wide Angle (W)</option>
+                <option value="N" selected>Normal (N)</option>
+                <option value="IR">Infrared (IR)</option>
+                <option value="T">Telephoto (T)</option>
+            </select>
+        </label>
+        <label>
+            Enabled
+            <input type="checkbox" id="camera{{ slot_num }}-enabled" name="camera{{ slot_num }}-enabled" role="switch">
+        </label>
+    </div>
+</fieldset>
+{% endmacro %}
