@@ -14,6 +14,14 @@ DEFAULT_SETTINGS = {
     "cloud_location": "https://cattern.com",
     "this_rover_ip": None,
     "lan_ip": None,
+    "hardware": {
+        "cpu_model": "Unknown",
+        "cpu_cores": 0,
+        "memory_mb": 0,
+        "os_name": "Unknown",
+        "os_version": "Unknown",
+        "platform": "Unknown",
+    },
     "active_camera_slot": None,  # No camera active by default
     "cameras": [
         {"slot": 1, "device": "", "type": "N", "enabled": False},

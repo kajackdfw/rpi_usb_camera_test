@@ -1,6 +1,8 @@
 """Startup tasks for rover initialization."""
 
 import logging
+import os
+import platform
 import requests
 from typing import Optional
 
@@ -84,14 +86,87 @@ def get_local_ip() -> Optional[str]:
         return None
 
 
+def get_hardware_info() -> dict:
+    """
+    Detect system hardware information.
+
+    Returns:
+        Dictionary with CPU model, core count, memory, and OS info
+    """
+    hardware_info = {
+        "cpu_model": "Unknown",
+        "cpu_cores": 0,
+        "memory_mb": 0,
+        "os_name": "Unknown",
+        "os_version": "Unknown",
+        "platform": "Unknown",
+    }
+
+    try:
+        # Get CPU info
+        if platform.system() == "Linux":
+            # Try to read /proc/cpuinfo for detailed CPU model
+            try:
+                with open("/proc/cpuinfo", "r") as f:
+                    for line in f:
+                        if line.startswith("model name"):
+                            hardware_info["cpu_model"] = line.split(":", 1)[1].strip()
+                            break
+                        elif line.startswith("Model"):  # ARM uses "Model" instead
+                            hardware_info["cpu_model"] = line.split(":", 1)[1].strip()
+                            break
+            except Exception:
+                pass
+
+            # If CPU model still unknown, try platform.processor()
+            if hardware_info["cpu_model"] == "Unknown":
+                processor = platform.processor()
+                if processor:
+                    hardware_info["cpu_model"] = processor
+
+            # Get memory info from /proc/meminfo
+            try:
+                with open("/proc/meminfo", "r") as f:
+                    for line in f:
+                        if line.startswith("MemTotal"):
+                            mem_kb = int(line.split()[1])
+                            hardware_info["memory_mb"] = mem_kb // 1024
+                            break
+            except Exception:
+                pass
+        else:
+            # Non-Linux fallback
+            hardware_info["cpu_model"] = platform.processor() or "Unknown"
+
+        # Get CPU core count
+        hardware_info["cpu_cores"] = os.cpu_count() or 0
+
+        # Get OS info
+        hardware_info["os_name"] = platform.system()
+        hardware_info["os_version"] = platform.release()
+        hardware_info["platform"] = platform.machine()
+
+        logger.info(f"Detected hardware: {hardware_info}")
+        return hardware_info
+
+    except Exception as e:
+        logger.error(f"Failed to detect hardware info: {e}")
+        return hardware_info
+
+
 def run_startup_tasks(settings) -> None:
     """
-    Run all startup tasks (IP detection, etc.).
+    Run all startup tasks (IP detection, hardware detection, etc.).
 
     Args:
         settings: Settings instance
     """
     logger.info("Running startup tasks...")
+
+    # Detect hardware info
+    hardware_info = get_hardware_info()
+    settings.set("hardware", hardware_info)
+    logger.info(f"Hardware info stored in settings: {hardware_info}")
 
     # Detect local LAN IP
     lan_ip = get_local_ip()

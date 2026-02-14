@@ -33,6 +33,47 @@
                        readonly>
             </label>
         </form>
+
+        <h3>Hardware</h3>
+        <form class="pico">
+            <label>
+                CPU Model
+                <input type="text"
+                       id="cpu-model"
+                       name="cpu-model"
+                       readonly>
+            </label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <label>
+                    CPU Cores
+                    <input type="text"
+                           id="cpu-cores"
+                           name="cpu-cores"
+                           readonly>
+                </label>
+                <label>
+                    Memory (MB)
+                    <input type="text"
+                           id="memory-mb"
+                           name="memory-mb"
+                           readonly>
+                </label>
+            </div>
+            <label>
+                Operating System
+                <input type="text"
+                       id="os-info"
+                       name="os-info"
+                       readonly>
+            </label>
+            <label>
+                Platform
+                <input type="text"
+                       id="platform"
+                       name="platform"
+                       readonly>
+            </label>
+        </form>
     </section>
 
     <!-- Cloud Configuration Card -->
@@ -218,6 +259,14 @@
 
     // Load LAN IP
     document.getElementById('lan-ip').value = roverSettings.lan_ip || 'Not detected';
+
+    // Load hardware info
+    const hardware = roverSettings.hardware || {};
+    document.getElementById('cpu-model').value = hardware.cpu_model || 'Unknown';
+    document.getElementById('cpu-cores').value = hardware.cpu_cores || '0';
+    document.getElementById('memory-mb').value = hardware.memory_mb || '0';
+    document.getElementById('os-info').value = `${hardware.os_name || 'Unknown'} ${hardware.os_version || ''}`.trim();
+    document.getElementById('platform').value = hardware.platform || 'Unknown';
 
     // Load cloud configuration
     function loadCloudSettings() {

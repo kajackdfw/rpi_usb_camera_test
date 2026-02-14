@@ -22,6 +22,14 @@
     }
   ],
   "cloud_location": "https://cattern.com",
-  "this_rover_ip": "76.187.216.180",
-  "lan_ip": "192.168.86.31"
+  "this_rover_ip": "97.99.28.106",
+  "lan_ip": "172.16.227.128",
+  "hardware": {
+    "cpu_model": "AMD Ryzen 7 7730U with Radeon Graphics",
+    "cpu_cores": 16,
+    "memory_mb": 15300,
+    "os_name": "Linux",
+    "os_version": "6.12.30+bpo-amd64",
+    "platform": "x86_64"
+  }
 }
