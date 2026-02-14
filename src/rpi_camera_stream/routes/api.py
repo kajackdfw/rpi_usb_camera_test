@@ -277,3 +277,111 @@ def generate_qr():
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
+
+
+@api_bp.route("/robot/command", methods=["POST"])
+def robot_command():
+    """Send command array to USB robot controller (LAN access).
+
+    Request body:
+    {
+        "commands": [value1, value2, ...],  // Array of command values
+        "read_response": false              // Optional: read response from device
+    }
+
+    Returns:
+        JSON response with success status and optional device response.
+
+    Example commands:
+        - Motor control: [left_speed, right_speed] (e.g., [255, 255])
+        - Servo positions: [servo1_angle, servo2_angle, servo3_angle]
+        - Mixed commands: [motor_left, motor_right, servo1, servo2, led_state]
+    """
+    robot_device = current_app.config.get("robot_device")
+
+    if robot_device is None:
+        return jsonify({"error": "Robot device not initialized"}), 500
+
+    # Get request data
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    commands = data.get("commands")
+    if not isinstance(commands, list):
+        return jsonify({"error": "Commands must be a JSON array"}), 400
+
+    read_response = data.get("read_response", False)
+
+    # Ensure device is connected
+    if not robot_device.is_connected():
+        if not robot_device.connect():
+            return jsonify({
+                "error": "Failed to connect to robot device",
+                "device_info": robot_device.get_info()
+            }), 503
+
+    # Send command
+    if read_response:
+        success, message, response_data = robot_device.send_command_with_response(commands)
+        return jsonify({
+            "success": success,
+            "message": message,
+            "response": response_data,
+            "commands_sent": commands
+        }), 200 if success else 500
+    else:
+        success, message = robot_device.send_command(commands)
+        return jsonify({
+            "success": success,
+            "message": message,
+            "commands_sent": commands
+        }), 200 if success else 500
+
+
+@api_bp.route("/robot/status", methods=["GET"])
+def robot_status():
+    """Get robot device status and configuration."""
+    robot_device = current_app.config.get("robot_device")
+    settings = current_app.config.get("settings")
+
+    if robot_device is None:
+        return jsonify({
+            "initialized": False,
+            "config": settings.get("robot_device", {})
+        })
+
+    return jsonify({
+        "initialized": True,
+        "device_info": robot_device.get_info(),
+        "config": settings.get("robot_device", {})
+    })
+
+
+@api_bp.route("/robot/connect", methods=["POST"])
+def robot_connect():
+    """Manually connect to robot device."""
+    robot_device = current_app.config.get("robot_device")
+
+    if robot_device is None:
+        return jsonify({"error": "Robot device not initialized"}), 500
+
+    if robot_device.is_connected():
+        return jsonify({"message": "Already connected", "device_info": robot_device.get_info()})
+
+    if robot_device.connect():
+        return jsonify({"success": True, "message": "Connected", "device_info": robot_device.get_info()})
+    else:
+        return jsonify({"success": False, "error": "Failed to connect"}), 503
+
+
+@api_bp.route("/robot/disconnect", methods=["POST"])
+def robot_disconnect():
+    """Manually disconnect from robot device."""
+    robot_device = current_app.config.get("robot_device")
+
+    if robot_device is None:
+        return jsonify({"error": "Robot device not initialized"}), 500
+
+    robot_device.disconnect()
+    return jsonify({"success": True, "message": "Disconnected"})

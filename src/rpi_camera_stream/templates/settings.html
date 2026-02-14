@@ -25,26 +25,32 @@
         </form>
         <p id="rover-name-status" class="status-message success hidden">Saved!</p>
 
+        <h3>Environment Details</h3>
         <form class="pico">
-            <label>
-                LAN IP
-                <input type="text"
-                       id="lan-ip"
-                       name="lan-ip"
-                       readonly>
-            </label>
-        </form>
-
-        <h3>Hardware</h3>
-        <form class="pico">
-            <label>
-                CPU Model
-                <input type="text"
-                       id="cpu-model"
-                       name="cpu-model"
-                       readonly>
-            </label>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <label>
+                    LAN IP
+                    <input type="text"
+                           id="lan-ip"
+                           name="lan-ip"
+                           readonly>
+                </label>
+                <label>
+                    Operating System
+                    <input type="text"
+                           id="os-info"
+                           name="os-info"
+                           readonly>
+                </label>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <label>
+                    CPU Model
+                    <input type="text"
+                           id="cpu-model"
+                           name="cpu-model"
+                           readonly>
+                </label>
                 <label>
                     CPU Cores
                     <input type="text"
@@ -52,6 +58,8 @@
                            name="cpu-cores"
                            readonly>
                 </label>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                 <label>
                     Memory (MB)
                     <input type="text"
@@ -59,21 +67,14 @@
                            name="memory-mb"
                            readonly>
                 </label>
+                <label>
+                    Platform
+                    <input type="text"
+                           id="platform"
+                           name="platform"
+                           readonly>
+                </label>
             </div>
-            <label>
-                Operating System
-                <input type="text"
-                       id="os-info"
-                       name="os-info"
-                       readonly>
-            </label>
-            <label>
-                Platform
-                <input type="text"
-                       id="platform"
-                       name="platform"
-                       readonly>
-            </label>
         </form>
     </section>
 

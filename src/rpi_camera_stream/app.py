@@ -9,7 +9,7 @@ from flask_socketio import SocketIO
 
 from .camera import FrameBuffer, OpenCVCamera
 from .config import Config
-from .routes import api_bp, mjpeg_bp, settings_bp, www_bp
+from .routes import api_bp, mjpeg_bp, settings_bp, www_bp, www_api_bp
 from .settings import Settings
 from .socketio_handlers import VideoNamespace
 
@@ -123,15 +123,36 @@ def create_app(config: Config = None) -> Flask:
 
     camera = OpenCVCamera(config.camera, frame_buffer)
 
+    # Initialize robot device if enabled
+    robot_device = None
+    robot_config = settings.get("robot_device", {})
+    if robot_config.get("enabled"):
+        from .robot import RobotSerialDevice
+
+        robot_device = RobotSerialDevice(
+            port=robot_config.get("port", "/dev/ttyUSB0"),
+            baud_rate=robot_config.get("baud_rate", 115200),
+            timeout=robot_config.get("timeout", 1.0)
+        )
+
+        # Auto-connect if configured
+        if robot_config.get("auto_connect"):
+            if robot_device.connect():
+                logger.info("Robot device connected on startup")
+            else:
+                logger.warning("Failed to auto-connect robot device")
+
     app.config["frame_buffer"] = frame_buffer
     app.config["camera"] = camera
     app.config["app_config"] = config
     app.config["settings"] = settings
+    app.config["robot_device"] = robot_device
 
     app.register_blueprint(api_bp)
     app.register_blueprint(mjpeg_bp)
     app.register_blueprint(settings_bp)
     app.register_blueprint(www_bp)
+    app.register_blueprint(www_api_bp)
 
     @app.route("/")
     def root():
@@ -212,3 +233,7 @@ def run_server(config: Config = None) -> None:
         camera.stop()
         if config.enable_preview and "preview" in app.config:
             app.config["preview"].stop()
+        # Disconnect robot device if connected
+        robot_device = app.config.get("robot_device")
+        if robot_device and robot_device.is_connected():
+            robot_device.disconnect()

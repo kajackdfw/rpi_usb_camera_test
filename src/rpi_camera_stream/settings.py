@@ -28,6 +28,13 @@ DEFAULT_SETTINGS = {
         {"slot": 2, "device": "", "type": "N", "enabled": False},
         {"slot": 3, "device": "", "type": "N", "enabled": False},
     ],
+    "robot_device": {
+        "enabled": False,
+        "port": "/dev/ttyUSB0",  # Common for Arduino/Waveshare via USB
+        "baud_rate": 115200,
+        "timeout": 1.0,
+        "auto_connect": False,  # Auto-connect on startup
+    },
 }
 
 

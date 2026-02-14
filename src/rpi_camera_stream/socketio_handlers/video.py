@@ -42,7 +42,7 @@ class VideoNamespace(Namespace):
         from flask import request
         sid = request.sid
 
-        quality = data.get("quality", "medium")
+        quality = data.get("quality", "low")
         if quality not in QUALITY_PRESETS:
             emit("error", {"message": f"Invalid quality: {quality}"})
             return
